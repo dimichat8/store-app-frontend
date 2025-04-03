@@ -1,0 +1,81 @@
+.text-in-center {
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+}
+
+.calendar-container {
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    padding: 20px;
+}
+
+.react-calendar {
+    width: 80%; 
+    max-width: 600px; 
+    border-radius: 10px; 
+    overflow: hidden; 
+}
+
+.react-calendar__navigation {
+    background-color: rgba(204, 173, 87, 0.788); 
+    color: white;
+}
+
+.react-calendar__month-view__days__day--now {
+    background-color: black !important; 
+    color: white !important; 
+}
+
+.react-calendar__month-view__days__day--selected {
+    background-color: red !important; 
+    color: white !important; 
+}
+
+.react-calendar__month-view__days__day {
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+.notes-container {
+    margin-top: 20px;
+    max-height: 200px; 
+    overflow-y: auto; 
+    width: 100%;  
+}
+
+
+.datatable-notes {
+    width: 100%; 
+}
+
+.input-text-calendar-notes {
+    border-radius: 20px;
+    border-color: black;
+    padding: 0.5em 1em; 
+    margin-top: 10px;
+}
+
+.input-text-calendar-notes {
+    border-radius: 20px;
+    border-color: black;
+    padding: 0.5em 1em; 
+    min-width: 1000px; 
+    min-height: 100px;
+    transition: background-color 0.2s;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 0 2px rgba(204, 173, 87, 0.788) !important;
+}
+
+.datatable-notes {
+    border-radius: 20px;
+    padding: 0.5em 1em; 
+    min-width: 1000px; 
+    min-height: 100px;
+    transition: background-color 0.2s;
+    margin-right: 20px;
+    margin-bottom: 5px;
+    
+}

@@ -1,0 +1,41 @@
+
+.p-button.custom-black-button,
+.p-button.custom-black-button:hover,
+.p-button.custom-black-button:focus,
+.p-button.custom-black-button:active {
+    box-shadow: 0 0 0 1px rgba(204, 173, 87, 0.788) !important;
+    background-color: black !important; 
+    color: white; 
+    border: 1px solid rgb(26, 24, 24) !important;
+}
+
+.p-button.custom-grey-button,
+.p-button.custom-grey-button:hover,
+.p-button.custom-grey-button:focus,
+.p-button.custom-grey-button:active {
+    box-shadow: none !important;
+    outline: none;
+    background-color: grey !important; 
+    color: white; 
+    border: 1px solid grey !important; 
+}
+
+.input-text {
+    border-radius: 20px;
+    border-color: black;
+    padding: 0.5em 1em; 
+    min-width: 350px; 
+    transition: background-color 0.2s;
+    margin-right: 20px;
+    box-shadow: 0 0 0 2px rgba(204, 173, 87, 0.788) !important;
+}
+
+.input-number {
+    border-radius: 20px;
+    border-color: black;
+    padding: 0.5em 1em; 
+    max-width: 1opx;
+    transition: background-color 0.2s;
+    margin-right: 20px;
+    box-shadow: 0 0 0 2px rgba(204, 173, 87, 0.788) !important;
+}
