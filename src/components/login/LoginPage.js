@@ -1,25 +1,41 @@
 import React, { useState } from 'react';
-import { InputText } from 'primereact/inputtext'; // Import PrimeReact InputText
-import { Button } from 'primereact/button'; // Import PrimeReact Button
-import { Toast } from 'primereact/toast'; // Import Toast for notifications
-import 'primereact/resources/themes/saga-blue/theme.css'; // Import the theme
-import 'primereact/resources/primereact.min.css'; // Import core styles
-import 'primeicons/primeicons.css'; // Import PrimeIcons
+import { InputText } from 'primereact/inputtext'; 
+import { Button } from 'primereact/button'; 
+import { Toast } from 'primereact/toast'; 
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css'; 
+import 'primeicons/primeicons.css'; 
 import '../login/LoginPage.css';
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const toast = React.useRef(null); // Reference for toast notifications
+    const toast = React.useRef(null); 
+
+    const [errors, setErrors] = useState({username: '', password: ''})
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Implement your login logic here
-        if (username && password) {
-            // Successful login handling
+
+        let newErrors = {username: '', password: ''};
+        let isvalid = true;
+
+        if (!username) {
+            newErrors.username = 'Παρακαλώ εισάγετε όνομα χρήση';
+            isvalid = false;
+        }
+         
+        if (!password) {
+            newErrors.password = 'Παρακαλώ εισάγετε κωδικό χρήστη'
+            isvalid = false;
+        }
+
+        setErrors(newErrors);
+        
+        if ((username && password) && isvalid) {
+        
             toast.current.show({ severity: 'success', summary: 'Επιτυχής είσοδος!', detail: 'Καλώς ήρθατε!', life: 3000 });
         } else {
-            // Handling failed login or validation
             toast.current.show({ severity: 'error', summary: 'Αποτυχημένη είσοδος.', detail: 'Παρακαλώ πληκτρολογήστε τα διαπιστευτήρια.', life: 3000 });
         }
     };
@@ -37,10 +53,10 @@ const LoginPage = () => {
                         id="username" 
                         value={username} 
                         onChange={(e) => setUsername(e.target.value)} 
-                        required 
                         placeholder="Πληκτρολογήστε το όνομα" 
                         className='input-text-username'
                     />
+                    {errors.username && <div style={{ textAlign: 'center', color: 'red', fontSize: '0.9em' }}>{errors.username}</div>}                
                 </div>
 
                 <div className="p-field">
@@ -52,10 +68,10 @@ const LoginPage = () => {
                         value={password} 
                         onChange={(e) => setPassword(e.target.value)} 
                         type="password" 
-                        required 
                         placeholder="Πληκτρολογήστε τον κωδικό" 
                         className='input-text-password'
                     />
+                    {errors.password && <div style={{textAlign: 'center', color: 'red', fontSize: '0.9em' }}>{errors.password}</div>}  
                 </div>
 
                 <Button 

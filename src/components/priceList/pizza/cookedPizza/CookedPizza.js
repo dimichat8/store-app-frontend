@@ -1,5 +1,5 @@
   import React, { useState, useEffect } from 'react';
-  import SharedDataTable from '../../SharedDataTable';
+  import SharedDataTable from '../../../SharedDataTable';
 
   const CookedPizza = () => {
     const [values, setValues] = useState([]);

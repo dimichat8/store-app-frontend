@@ -10,6 +10,7 @@
     box-sizing: border-box;    
     font-size: 16px;          
     line-height: 1.5;  
+    text-align: center;
 }
 
 .input-text-password {
@@ -24,7 +25,8 @@
     box-shadow: 0 0 0 2px rgba(204, 173, 87, 0.788) !important;
     box-sizing: border-box;    
     font-size: 16px;      
-    line-height: 1.5;      
+    line-height: 1.5; 
+    text-align: center;   
 }
 
 .centered-header {
