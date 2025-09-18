@@ -46,30 +46,26 @@ const LoginPage = () => {
             <Toast ref={toast} />
             <form onSubmit={handleLogin}>
                 <div className="p-field">
-                <label htmlFor="username" style={{ textAlign: 'center', width: '100%'}}>
-                    <h4 style={{ marginBottom: '5px', textAlign: 'center' }}>Όνομα</h4>
-                </label>
+                <label className="center-label">Όνομα</label>
                     <InputText 
                         id="username" 
                         value={username} 
                         onChange={(e) => setUsername(e.target.value)} 
                         placeholder="Πληκτρολογήστε το όνομα" 
-                        className='input-text-username'
+                        className='input-text-username-password'
                     />
                     {errors.username && <div style={{ textAlign: 'center', color: 'red', fontSize: '0.9em' }}>{errors.username}</div>}                
                 </div>
 
                 <div className="p-field">
-                    <label htmlFor="username" style={{ textAlign: 'center', width: '100%'}}>
-                        <h4 style={{ marginBottom: '5px', textAlign: 'center' }}>Κωδικός</h4>
-                    </label>
+                    <label className="center-label">Κωδικός</label>
                     <InputText 
                         id="password" 
                         value={password} 
                         onChange={(e) => setPassword(e.target.value)} 
                         type="password" 
                         placeholder="Πληκτρολογήστε τον κωδικό" 
-                        className='input-text-password'
+                        className='input-text-username-password'
                     />
                     {errors.password && <div style={{textAlign: 'center', color: 'red', fontSize: '0.9em' }}>{errors.password}</div>}  
                 </div>
@@ -77,7 +73,7 @@ const LoginPage = () => {
                 <Button 
                     type="submit" 
                     label="Είσοδος" 
-                    className="custom-black-button" 
+                    className="sign-in-button-pricelist" 
                     style={{ width: '100%' }} 
                     rounded
                 />

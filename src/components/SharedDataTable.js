@@ -25,7 +25,6 @@ const SharedDataTable = ({
     setSearchTerm(e.target.value);
   };
 
-  // Function to render edit and delete buttons
   const actionBodyTemplate = (rowData) => {
     return (
       <div>
@@ -56,7 +55,7 @@ const SharedDataTable = ({
           type="text"
           value={searchTerm}
           onChange={handleSearchChange}
-          className="search-input mr-2"
+          className="input-text-search"
         />
         <Button 
           icon="pi pi-plus" 
@@ -76,7 +75,6 @@ const SharedDataTable = ({
         {fields.map((field, index) => (
           <Column key={index} field={field} header={headers[index]} style={{ width: '25%' }} />
         ))}
-        {/* Add a column for actions */}
         <Column body={actionBodyTemplate} header="Δράσεις" />
       </DataTable>
     </div>

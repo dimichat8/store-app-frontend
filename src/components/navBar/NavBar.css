@@ -37,7 +37,6 @@
 
 .search-input {
     border-radius: 20px;
-    border-color: black;
     padding: 0.5em 1em; 
     min-width: 200px; 
     width: 100%;
@@ -47,13 +46,34 @@
     box-shadow: 0 0 0 2px rgba(204, 173, 87, 0.788) !important;
 }
 
+.input-text-search {
+    border-radius: 10px;
+    padding: 0.5em 1em; 
+    min-width: 500px; 
+    min-height: 50px;
+    transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+    margin: 0 auto 20px auto;
+    display: block;
+    width: 100%;
+    box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
+    border: 1px solid rgba(204, 173, 87, 0.788) !important;
+}
+
+.input-text-search:hover,
+.input-text-search:focus {
+    border-color: rgba(153, 101, 21, 0.9) !important;
+    box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4) !important;
+}
+
 .add-button {
     box-shadow: none !important;
     outline: none;
     background-color: black !important; 
     color: white; 
     border: 1px solid grey !important; 
-    margin-right: '20px';
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-bottom: 20px;
 }
 
 .nav-item-1 {
@@ -67,7 +87,7 @@
 
 /* Χρώμα φόντου για hover */
 .nav-item-1:hover {
-    background-color: rgba(204, 173, 87, 0.788); /* Όταν περνάει το ποντίκι */
+    background-color: rgba(204, 173, 87, 0.788);
 }
 
 
@@ -84,5 +104,4 @@
     height: 80px;   
     width: auto;     
 }
-
 

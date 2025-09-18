@@ -1,35 +1,37 @@
-.input-text-username {
-    border-radius: 20px;
-    border-color: black;
-    padding: 0.5em 1em;        
+
+
+.input-text-username-password {
+    border-radius: 10px;
+    padding: 0.5em 1em; 
     min-width: 350px; 
-    height: 50px;              
-    transition: background-color 0.2s;
-    margin-right: 20px;
-    box-shadow: 0 0 0 2px rgba(204, 173, 87, 0.788) !important;
-    box-sizing: border-box;    
-    font-size: 16px;          
-    line-height: 1.5;  
+    min-height: 50px;
+    transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+    margin: 0 auto 20px auto;
+    display: block;
+    box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
+    border: 1px solid rgba(204, 173, 87, 0.788) !important;
+    font-weight: bold;
     text-align: center;
 }
 
-.input-text-password {
-    border-radius: 20px;
-    border-color: black;
-    padding: 0.5em 1em;         
-    min-width: 350px; 
-    height: 50px;                
-    transition: background-color 0.2s;
-    margin-right: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 0 0 2px rgba(204, 173, 87, 0.788) !important;
-    box-sizing: border-box;    
-    font-size: 16px;      
-    line-height: 1.5; 
-    text-align: center;   
+.input-text-username-password:hover,
+.input-text-username-password:focus {
+    border-color: rgba(153, 101, 21, 0.9) !important; 
+    box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4) !important;
 }
 
 .centered-header {
     margin-bottom: 30px;
     text-align: center; 
+}
+
+.sign-in-button-pricelist {
+    display: block;       
+    margin: 20px auto; 
+    box-shadow: none !important;
+    outline: none;
+    background-color: black !important; 
+    color: white; 
+    border-radius: 10px;
+    border: none;
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import img1 from '../../photos/1-scaled.webp'; 
-import img2 from '../../photos/2.jpeg'; 
-import img3 from '../../photos/3.jpeg'; 
+import img1 from '../../photos/nyxtas.webp'; 
+import img2 from '../../photos/nyxtas2.webp'; 
+import img3 from '../../photos/nyxtas3.webp'; 
 
 const Home = () => {
   const images = [img1, img2, img3]; 
@@ -16,13 +16,17 @@ const Home = () => {
   }, []);
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '10px' }}>
-      <img 
-        src={images[currentIndex]} 
-        alt="Carousel" 
-        style={{ width: '100%', height: '500px', borderRadius: '10px' }} 
-      />
-    </div>
+    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+  <img 
+    src={images[currentIndex]} 
+    alt="Carousel" 
+    style={{ 
+      width: '100%',           
+      height: '90%',          
+      objectFit: 'cover',      
+    }} 
+  />
+</div>
   );
 };
 

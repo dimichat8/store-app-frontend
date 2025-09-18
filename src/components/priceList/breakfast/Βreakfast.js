@@ -1,64 +1,53 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import SharedDataTable from '../../SharedDataTable';
-import mockValuesBreakfast from './mockdataBreakfast';
-
+import AddItem from '../../AddItem';
 
 const Breakfast = () => {
-  const [values, setValues] = useState(mockValuesBreakfast); 
+  const [values, setValues] = useState([]);
+  const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
 
-  const headers = ['Όνομα Προϊόντος', 'Ποσότητα Προϊόντων', 'Τιμή Προϊόντος'];
+  const category = 'Πρωινό';
+  const headers = ['Όνομα Προϊόντος', 'Τιμή Προϊόντος'];
+
+  const fetchPrices = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/price/find/byCategory`, {
+        params: { category }
+      });
+      console.log(response.data);
+      setValues(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPrices();
+  }, [category]);
+
+  const handleAdd = (newProduct) => {
+    setValues([...values, newProduct]);
+  };
 
   return (
-      <SharedDataTable 
-          data={values} 
-          searchPlaceholder="Αναζήτηση για πρωινά" 
-          fields={['name', 'quantity', 'price']} 
-          headers={headers} 
-      />
+      <div>
+          <SharedDataTable
+            data={values}
+            searchPlaceholder="Αναζήτηση για πρωινά"
+            fields={['productName', 'priceValue']}
+            headers={headers}
+            onAdd={() => setIsAddDialogVisible(true)}
+          />
+
+          <AddItem
+            visible={isAddDialogVisible}
+            onHide={() => setIsAddDialogVisible(false)}
+            onAdd={handleAdd} 
+            category={category}
+          />
+      </div>
   );
 };
 
 export default Breakfast;
-
-
-// import React, { useState, useEffect } from 'react';
-// import { DataTable } from 'primereact/datatable';
-// import { Column } from 'primereact/column';
-// import { InputText } from 'primereact/inputtext';
-// import mockValuesBreakfast from './mockdataBreakfast';
-
-
-// export default function Βreakfast () {
-//   const [values, setValues] = useState(mockValuesBreakfast);
-//     const [searchTerm, setSearchTerm] = useState(''); 
-
-//     const filteredCustomers = values.filter(value => 
-//       value.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-//       value.quantity.toString().toLowerCase().includes(searchTerm.toLowerCase()) || 
-//       value.price.toString().toLowerCase().includes(searchTerm.toLowerCase())
-//   );
-
-//   const handleSearchChange = (e) => {
-//       setSearchTerm(e.target.value); 
-//   };
-
-//     return (
-//         <div className="card">
-//            <div className="card">
-//             <InputText 
-//                 placeholder="Αναζήτηση" 
-//                 type="text" 
-//                 value={searchTerm} 
-//                 onChange={handleSearchChange} 
-//                 className="search-input mr-2"
-//             />
-
-//             <DataTable value={filteredCustomers} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
-//                 <Column field="name" header="Όνομα" style={{ width: '25%' }}></Column>
-//                 <Column field="quantity" header="Ποσότητα" style={{ width: '25%' }}></Column>
-//                 <Column field="price" header="Τιμή" style={{ width: '25%' }}></Column>
-//             </DataTable>
-//             </div>
-//         </div>
-//     );
-//   }; 
