@@ -6,7 +6,7 @@ import { Column } from 'primereact/column';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import './AddOrders.css'; // Εισαγωγή του CSS αρχείου
+import './AddOrders.css';
 
 const AddOrders = () => {
     const [entries, setEntries] = useState([{ productName: '', description: '', quantity: '' }]); 
@@ -22,7 +22,7 @@ const AddOrders = () => {
 
         const newEntry = { productName, description, quantity };
         setEntries([...entries, newEntry]);
-        resetForm(); // Επαναφορά της φόρμας
+        resetForm();
     };
 
     const resetForm = () => {
@@ -33,34 +33,34 @@ const AddOrders = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Order Entries:', entries); // Εμφάνιση των παραγγελιών στο κονσόλα
+        console.log('Order Entries:', entries); 
     };
 
     return (
-        <div className="card">
+        <div>
             <h2>Προσθήκη Παραγγελίας</h2>
             <form onSubmit={handleSubmit}>
-                <div className="field mb-3" style={{ display: 'flex', alignItems: 'center' }}>
+                <div  style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px' }}>
                     <InputText 
                         placeholder="Όνομα Προϊόντος"
                         value={productName}
                         onChange={(e) => setProductName(e.target.value)}
                         style={{ marginRight: '10px' }}
-                        className='input-text'
+                        className='input-text-order'
                     />
                     <InputText 
                         placeholder="Περιγραφή"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         style={{ marginRight: '10px' }}
-                        className='input-text'
+                        className='input-text-order'
                     />
                      <InputText 
                         placeholder="Ποσότητα"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
                         style={{ marginRight: '10px' }}
-                        className='input-text'
+                        className='input-text-order'
                     />
                     <Button 
                         label="Προσθήκη" 
@@ -72,7 +72,7 @@ const AddOrders = () => {
                 </div>
             </form>
 
-            <h3>Συγκεντρωμένος Πίνακας Παραγγελιών</h3>
+            <h3>Πίνακας Παραγγελιών</h3>
             <DataTable value={entries} style={{ marginTop: '20px' }}>
                 <Column field="productName" header="Όνομα Προϊόντος" />
                 <Column field="description" header="Περιγραφή" />
