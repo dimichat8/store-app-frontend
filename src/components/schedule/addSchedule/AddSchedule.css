@@ -1,16 +1,23 @@
-.input-text {
-    border-radius: 20px;
-    border-color: black;
+.input-text-schedule {
+    border-radius: 10px;
     padding: 0.5em 1em; 
-    min-width: 30px; 
-    transition: background-color 0.2s;
-    margin-right: 20px;
-    box-shadow: 0 0 0 2px rgba(204, 173, 87, 0.788) !important;
+    min-width: 850px; 
+    min-height: 30px;
+    transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+    margin: 0 10px 20px 0;
+    box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
+    border: 1px solid rgba(204, 173, 87, 0.788) !important;
+    display: flex;
+}
+
+.input-text-schedule:hover,
+.input-text-schedule:focus {
+    border-color: rgba(153, 101, 21, 0.9) !important;
+    box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4) !important;
 }
 
 .input-number {
     border-radius: 20px;
-    border-color: black;
     padding: 0.5em 1em; 
     min-width: 150px; 
     transition: background-color 0.2s;
@@ -27,4 +34,15 @@
     background-color: black !important; 
     color: white; 
     border: 1px solid rgb(26, 24, 24) !important;
+}
+
+/* Αλλάζει το χρώμα κατά το hover */
+.p-dropdown-items .p-dropdown-item:hover {
+    background-color: rgba(204, 173, 87, 0.788) !important;
+    color: #000 !important; /* Προαιρετικά για καλύτερη αντίθεση */
+}
+
+/* Προαιρετικά: Αλλάζει και όταν είναι selected */
+.p-dropdown-items .p-dropdown-item.p-highlight {
+    background-color: rgba(204, 173, 87, 0.5) !important;
 }
