@@ -1,0 +1,113 @@
+.text-in-center {
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+}
+
+.calendar-container {
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    padding: 20px;
+}
+
+.react-calendar {
+    width: 80%; 
+    max-width: 600px; 
+    border-radius: 10px; 
+    overflow: hidden; 
+}
+
+.react-calendar__navigation {
+    background-color: rgba(204, 173, 87, 0.788); 
+    color: white;
+}
+
+.react-calendar__tile--now {
+    background-color: #f8e4d6 !important;
+}
+
+.react-calendar__tile--active {
+    background-color: rgba(204, 173, 87, 0.788) !important;
+}
+
+.react-calendar__month-view__days__day--selected {
+    background-color: red !important; 
+    color: white !important; 
+}
+
+.react-calendar__month-view__days__day {
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+.notes-container {
+    margin-top: 20px;
+    max-height: 200px; 
+    overflow-y: auto; 
+    width: 100%;  
+}
+
+
+.datatable-notes {
+    width: 100%; 
+}
+
+.input-text-calendar-notes-title {
+    border-radius: 10px;
+    padding: 0.5em 1em; 
+    min-width: 500px; 
+    min-height: 50px;
+    transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+    margin: 0 auto 20px auto;
+    display: block;
+    box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
+    border: 1px solid rgba(204, 173, 87, 0.788) !important;
+}
+
+.input-text-calendar-notes-title:hover,
+.input-text-calendar-notes-title:focus {
+    border-color: rgba(153, 101, 21, 0.9) !important;
+    box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4) !important;
+}
+
+.input-text-calendar-notes {
+    border-radius: 10px;
+    padding: 0.5em 1em; 
+    min-width: 1000px; 
+    min-height: 100px;
+    transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+    margin: 0 auto 20px auto;
+    display: block;
+    box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
+    border: 1px solid rgba(204, 173, 87, 0.788) !important;
+}
+
+.input-text-calendar-notes:hover,
+.input-text-calendar-notes:focus {
+    border-color: rgba(153, 101, 21, 0.9) !important; 
+    box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4) !important;
+}
+
+.datatable-notes {
+    border-radius: 10px;
+    padding: 0.5em 1em; 
+    min-width: 1000px; 
+    min-height: 100px;
+    transition: background-color 0.2s;
+    margin-right: 20px;
+    margin-bottom: 5px;
+    
+}
+
+.p-button-danger.custom-delete-button {
+    background-color: #8f8e8e !important;  
+    border-color: #aaa !important;
+    color: #333 !important;
+}
+
+.p-button-danger.custom-delete-button:hover {
+    background-color: #b89e6d !important; 
+    border-color: #a07f40 !important;
+    color: #fff !important;
+}
