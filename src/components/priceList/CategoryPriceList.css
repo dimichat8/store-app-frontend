@@ -1,0 +1,19 @@
+.p-confirm-dialog-accept.custom-accept-button {
+    background-color: red !important;
+    color: white !important;
+    border-radius: 20px !important;
+    padding: 0.5rem 1.5rem !important;
+    border: 2px solid rgb(150, 0, 0) !important;
+    box-shadow: 0 0 0 1px rgb(122, 1, 1) !important;
+    font-weight: bold;
+}
+
+.p-confirm-dialog-reject.custom-reject-button {
+    background-color: grey !important;
+    color: white !important;
+    border-radius: 20px !important;
+    padding: 0.5rem 1.5rem !important;
+    border: 2px solid grey !important;
+    box-shadow: 0 0 0 2px rgb(61, 60, 60) !important;
+    font-weight: bold;
+}
