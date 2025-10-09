@@ -6,14 +6,17 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button'; 
-import axios from 'axios';
 import './AddNotes.css';
+import ApiService from '../ApiService';
+import { Toast } from 'primereact/toast'; 
+
 
 const AddNotes = () => {
     const [createdAt, setCreatedAt] = useState(new Date());
     const [title, setTitle] = useState('');
     const [content, setNote] = useState('');
     const [notesList, setNotesList] = useState([]);
+    const toast = React.useRef(null); 
 
     const handleAddNote = () => {
         if (!title && !content) return;
@@ -40,22 +43,32 @@ const AddNotes = () => {
             }))
 
         try {
-            const response = await axios.post("http://localhost:8080/note/add", payload,
-        {
-            headers: {
-            "Content-Type": "application/json"
-            }
-        }
-        ); 
-            
-            if (response.data.success) {
-                console.log("Όλες οι σημειώσεις αποθηκεύτηκαν επιτυχώς!");
+            const response = await ApiService.addNotes(payload);
+            console.log(response.data)
+            if (response.status === 200) {
+                toast.current.show({
+                severity: "success",
+                summary: "Επιτυχία",
+                detail: response.data.message,
+                life: 3000,
+                });
                 setNotesList([]);
             } else {
-                console.error("Αποτυχία αποθήκευσης:", response.data.message);
+                toast.current.show({
+                severity: "warn",
+                summary: "Προειδοποίηση",
+                detail: response.data.message || "Κάτι πήγε στραβά",
+                life: 3000,
+                });
             }
         } catch (error) {
             console.error("Σφάλμα κατά την αποθήκευση:", error);
+            toast.current.show({
+                severity: "error",
+                summary: "Σφάλμα",
+                detail: "Αποτυχία αποθήκευσης σημειώσεων.",
+                life: 3000,
+            });
         }
     };
 
@@ -70,6 +83,7 @@ const AddNotes = () => {
 
     return (
         <div className="calendar-container">
+            <Toast ref={toast} />
             <Calendar onChange={setCreatedAt} value={createdAt} />
 
             <div className='text-in-center' style={{ marginTop: '10px' }}>
@@ -94,12 +108,14 @@ const AddNotes = () => {
             <div style={{ marginTop: '10px' }}>
                 <Button 
                     label="Προσθήκη Σημείωσης" 
+                    icon="pi pi-plus"
                     className='custom-black-button' 
                     onClick={handleAddNote} 
                     rounded
                 />
                 <Button 
                     label="Αποθήκευση Όλων" 
+                    icon="pi pi-save"
                     className='custom-black-button' 
                     onClick={handleSaveAll} 
                     rounded

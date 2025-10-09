@@ -1,47 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from 'primereact/card';
-import axios from "axios";
 import './Notes.css'; 
 import { Calendar } from 'primereact/calendar';
-import { InputText } from "primereact/inputtext";
+import { InputText } from 'primereact/inputtext';
+import ApiService from '../ApiService';
+
 
 const Notes = () => {
     const [notes, setNotes] = useState([]);
-    const [title, setTitle] = useState('')
+    const [title, setTitle] = useState('');
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
 
-    const fetchNotes = async () => {
+    const fetchAllNotes = async () => {
         try {
-            const response = await axios.get("http://localhost:8080/note/find/byFilters", {
-                params: {
-                    title: title.trim() || null,
-                    dateFrom: dateFrom ? formatDateToISO(dateFrom) : null,
-                    dateTo: dateTo ? formatDateToISO(dateTo) : null
-                }
-                });
-            console.log(response.data);
-            setNotes(response.data.data);
+            const response = await ApiService.findAllNotes();
+            setNotes(response.data.data || []);
         } catch (error) {
             console.error("Σφάλμα:", error);
         }
     };
 
-    function formatDateToISO(date) {
-    const d = new Date(date);
-    return d.toISOString().split('T')[0];
-}
-
     useEffect(() => {
-        fetchNotes();
-    }, [title, dateFrom, dateTo]);
+        fetchAllNotes();
+    }, []);
+
+    const filteredNotes = notes.filter((note) => {
+        const matchesTitle =
+            !title || (note.title && note.title.toLowerCase().includes(title.toLowerCase()));
+
+        const noteDate = new Date(note.createdAt);
+        
+        const fromDate = dateFrom ? new Date(dateFrom.setHours(0,0,0,0)) : null;
+        const toDate = dateTo ? new Date(dateTo.setHours(23,59,59,999)) : null;
+
+        const matchesDateFrom = !fromDate || noteDate >= fromDate;
+        const matchesDateTo = !toDate || noteDate <= toDate;
+
+        return matchesTitle && matchesDateFrom && matchesDateTo;
+    });
 
     return (
         <div>
-            <div className="calendar-title">
-                <InputText value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
-                placeholder="Αναζήτηση τίτλου" 
+            <div>
+                <InputText
+                    value={title} 
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Αναζήτηση τίτλου" 
+                    className="calendar-title"
                 />
             </div>
         
@@ -52,6 +58,8 @@ const Notes = () => {
                     selectionMode="single" 
                     placeholder="Από"
                     dateFormat="dd/mm/yy"
+                    showIcon
+                    className="custom-calendar"
                 />
                 <Calendar 
                     value={dateTo} 
@@ -59,11 +67,13 @@ const Notes = () => {
                     selectionMode="single" 
                     placeholder="Έως" 
                     dateFormat="dd/mm/yy"
+                    showIcon
+                    className="custom-calendar"
                 />
             </div>      
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', padding: '1rem' }}>
-                {notes.map((note, index) => (
+                {filteredNotes.map((note, index) => (
                     <Card
                         key={index}
                         title={`${note.title} | ${note.createdAt}`}

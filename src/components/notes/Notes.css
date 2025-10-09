@@ -130,7 +130,9 @@ body {
 
 .calendar-wrapper .p-inputtext {
     border-radius: 8px !important;   
-    padding: 8px 12px !important;    
+    padding: 8px 12px !important;  
+    min-width: 270px !important;
+    min-height: 50px;  
     border: 1px solid #ccc;  
     border-color: rgba(204, 173, 87, 0.788) !important;        
     background-color: #fff;          
@@ -143,34 +145,27 @@ body {
 }
 
 .calendar-title {
-    display: flex;          
-    justify-content: center;   
-    align-items: center;       
-    gap: 1.5rem;               
-    padding: 1rem;
+    border-radius: 10px;
+    padding: 0.5em 1em; 
+    min-width: 640px !important;
+    min-height: 50px;
+    transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+    margin: 20px auto 20px auto;
+    display: block;
+    box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
+    border: 1px solid rgba(204, 173, 87, 0.788) !important;
 }
 
-.calendar-title .p-inputtext {
-    width: 440px !important;
-    border-radius: 8px !important;
-    padding: 8px 12px !important;
-    border-color: rgba(204, 173, 87, 0.788) !important;  
-    background-color: #fff;
-    text-align: center;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.calendar-title .p-inputtext:hover,
-.calendar-title .p-inputtext:focus {
+.calendar-title:hover,
+.calendar-title:focus {
     border-color: rgba(153, 101, 21, 0.9) !important;
     box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4) !important;
 }
 
-.calendar-title .p-inputtext.p-inputwrapper-focus {
-    border-color: rgba(153, 101, 21, 0.9) !important;
-    box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4) !important;
-}
-
-.calendar-title .p-calendar {
-    width: auto !important;
+.p-calendar .p-datepicker-trigger {
+    background-color: #cca34f !important;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(172, 144, 69, 0.788) !important;
+    border: 1px solid rgba(160, 134, 65, 0.788) !important;
+    font-size: 1.2rem !important;
 }
