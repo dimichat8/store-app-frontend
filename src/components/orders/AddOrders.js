@@ -1,79 +1,81 @@
 import React, { useState } from 'react';
-import { InputText } from 'primereact/inputtext'; 
-import { Button } from 'primereact/button'; 
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column'; 
+import { Column } from 'primereact/column';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import './AddOrders.css';
 
 const AddOrders = () => {
-    const [entries, setEntries] = useState([{ productName: '', description: '', quantity: '' }]); 
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [quantity, setQuantity] = useState('');
+    const [orderList, setOrderList] = useState([]);
 
-    const handleAddEntry = () => {
-        if (!productName || !description || !quantity) {
-            alert("Παρακαλώ συμπληρώστε όλα τα πεδία.");
-            return;
-        }
+    const handleAddOrder = () => {
+        if (!productName || !description || !quantity) return;
 
-        const newEntry = { productName, description, quantity };
-        setEntries([...entries, newEntry]);
-        resetForm();
-    };
-
-    const resetForm = () => {
+        const newOrder = { productName, description, quantity };
+        setOrderList((prev) => [...prev, newOrder]);
         setProductName('');
         setDescription('');
         setQuantity('');
     };
 
+    
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Order Entries:', entries); 
+        console.log('Order Entries:', orderList);
     };
 
     return (
         <div>
             <h2>Προσθήκη Παραγγελίας</h2>
-            <form onSubmit={handleSubmit}>
-                <div  style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px' }}>
-                    <InputText 
+                <div className="order-container">
+                    <div className="input-row">
+                        <InputText
                         placeholder="Όνομα Προϊόντος"
                         value={productName}
                         onChange={(e) => setProductName(e.target.value)}
-                        style={{ marginRight: '10px' }}
-                        className='input-text-order'
-                    />
-                    <InputText 
+                        className="input-text-order"
+                        />
+                        <InputText
                         placeholder="Περιγραφή"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        style={{ marginRight: '10px' }}
-                        className='input-text-order'
-                    />
-                     <InputText 
+                        className="input-text-order"
+                        />
+                        <InputText
                         placeholder="Ποσότητα"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
-                        style={{ marginRight: '10px' }}
-                        className='input-text-order'
-                    />
-                    <Button 
-                        label="Προσθήκη" 
-                        icon="pi pi-plus" 
-                        onClick={handleAddEntry} 
+                        className="input-text-order"
+                        />
+                    </div>
+
+                    <div className="button-row">
+                        <Button
+                        label="Προσθήκη Παραγγελίας"
+                        icon="pi pi-plus"
+                        onClick={handleAddOrder}
                         className="custom-black-button"
                         rounded
-                    />
-                </div>
-            </form>
+                        />
+                        <Button
+                        label="Αποθήκευση Όλων"
+                        icon="pi pi-save"
+                        onClick={handleSubmit}
+                        className="custom-black-button"
+                        rounded
+                        />
+                    </div>
+                    </div>
+            
 
             <h3>Πίνακας Παραγγελιών</h3>
-            <DataTable value={entries} style={{ marginTop: '20px' }}>
+            <DataTable value={orderList} style={{ marginTop: '20px' }}>
                 <Column field="productName" header="Όνομα Προϊόντος" />
                 <Column field="description" header="Περιγραφή" />
                 <Column field="quantity" header="Ποσότητα" />
