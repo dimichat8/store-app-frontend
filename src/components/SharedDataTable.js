@@ -17,7 +17,9 @@ const SharedDataTable = ({
 
   const filteredData = data.filter(item =>
     fields.some(field =>
-      item[field].toString().toLowerCase().includes(searchTerm.toLowerCase())
+    item[field] !== undefined && item[field] !== null 
+      ? item[field].toString().toLowerCase().includes(searchTerm.toLowerCase())
+      : false
     )
   );
 
