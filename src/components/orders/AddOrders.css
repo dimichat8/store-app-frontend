@@ -1,3 +1,24 @@
+.order-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    gap: 20px; 
+}
+
+.input-row {
+    display: flex;
+    justify-content: center; 
+    gap: 20px; 
+    flex-wrap: wrap;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
 
 .p-button.custom-black-button,
 .p-button.custom-black-button:hover,
@@ -25,10 +46,10 @@
 .input-text-order {
     border-radius: 10px;
     padding: 0.5em 1em; 
-    min-width: 550px; 
+    min-width: 500px; 
     min-height: 30px;
     transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
-    margin: 0 10px 20px 0;
+    margin: 20px 20px 20px 20px;
     box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
     border: 1px solid rgba(204, 173, 87, 0.788) !important;
 }
