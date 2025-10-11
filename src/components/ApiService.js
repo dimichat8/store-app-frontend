@@ -4,12 +4,16 @@ const API_BASE_URL = "http://localhost:8080";
 
 class ApiService {
 
+//------------PRICE------------//
+
 // GET find by category
     static async findByCategory(category) {
         return axios.get(`${API_BASE_URL}/api/price/find/byCategory`, {
         params: { category }
         });
     }
+
+//------------PRODUCT------------//
 
 //POST add product
     static async addProduct(product) {
@@ -33,6 +37,8 @@ class ApiService {
         });
     }
 
+//------------NOTES------------//
+
 //GET find notes by title and dates
     static async findNotesByTitleAndDates(title, dateFrom, dateTo) {
         return axios.get(`${API_BASE_URL}/api/note/find/byFilters`, {
@@ -50,7 +56,7 @@ class ApiService {
         return axios.get(`${API_BASE_URL}/api/note/find/all`, {
             headers: { "Content-Type": "application/json" }
             });
-        }         
+    }         
 
 //POST add notes
     static async addNotes(notesList) {
@@ -58,6 +64,14 @@ class ApiService {
         headers: { "Content-Type": "application/json" },
         });
     }
+
+//------------ORDERS------------//
+
+    static async findAllOrders() {
+        return axios.get(`${API_BASE_URL}/api/orders/find/all`, {
+            headers: { "Content-Type": "application/json" }
+            });
+        }   
     
 }
 
