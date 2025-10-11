@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import './HistoryOfOrders.css';
+import ApiService from '../ApiService';
+
 
 const data = [
   { name: 'Αλάτι', description: 'Αλάτι Ημαθίων', amount: '3', date: '10/7/2020' },
@@ -15,8 +17,22 @@ const data = [
   { name: 'Ψωμί', description: 'Ψωμί Θεσσαλονίκης', amount: '15', date: '1/8/2020' },
   { name: 'Φρούτα', description: 'Φρούτα Πελοποννήσου', amount: '20', date: '5/8/2020' }
 ];
-export default function MyTable() {
-    const [rowsCount, setRowsCount] = useState(5); // Αρχική επιλογή γραμμών
+function MyTable() {
+    const [rowsCount, setRowsCount] = useState(5);
+    const [values, setValues] = useState([]); 
+
+    const fetchPrices = async () => {
+        try {
+        const response = await ApiService.findAllOrders();
+        setValues(response.data.data);
+        } catch (error) {
+        console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchPrices();
+    }, []);
 
 
     return (
@@ -37,3 +53,5 @@ export default function MyTable() {
         </div>
     );
 }
+
+export default MyTable;
