@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ApiService from '../ApiService';
-import SharedDataTable from '../SharedDataTable';
-import AddItem from '../AddItem';
+import SharedDataTable from './SharedDataTable';
+import AddItem from './AddItem';
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import '../priceList/CategoryPriceList.css';
