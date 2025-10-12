@@ -1,13 +1,41 @@
 .input-text-schedule {
     border-radius: 10px;
     padding: 0.5em 1em; 
-    min-width: 800px; 
+    min-width: 200px; 
     min-height: 30px;
+    width: 35%;
     transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
     margin: 20px 20px 20px 20px;
     box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
     border: 1px solid rgba(204, 173, 87, 0.788) !important;
     display: flex;
+}
+
+.input-row {
+    display: flex;
+    justify-content: center; 
+    gap: 20px; 
+    flex-wrap: wrap;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+
+.p-button.custom-black-button,
+.p-button.custom-black-button:hover,
+.p-button.custom-black-button:focus,
+.p-button.custom-black-button:active {
+    box-shadow: 0 0 0 1px rgba(204, 173, 87, 0.788) !important;
+    background-color: black !important; 
+    color: white; 
+    border: 1px solid rgb(26, 24, 24) !important;
+    margin-left: 20px;
+    margin-bottom: 20px;
 }
 
 .input-text-schedule:hover,

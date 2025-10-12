@@ -35,23 +35,37 @@ const Schedule = () => {
     ];
 
     const addSchedule = () => {
-        if (!day || !worker || !shift || !time) {
-            toast.current.show({ 
-                severity: 'wanring', 
-                summary: 'Ενημέρωση', 
-                detail: 'Παρακαλώ συμπληρώστε όλα τα πεδία.', 
-                life: 3000 
+        let newErrors = [];
+
+        if (!day) newErrors.push("Τίτλος");
+        if (!shift) newErrors.push("Βάρδια");
+        if (!worker) newErrors.push("Εργαζόμενοι");
+        if (!time) newErrors.push("Ώρες");
+
+        if (newErrors.length > 0) {
+            toast.current.show({
+                severity: 'warn',
+                content: (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ color: '#f1c40f', fontSize: '1.5rem' }}>⚠️</span> 
+                    <div>
+                        <strong>Προσοχή</strong>
+                        <div>Συμπληρώστε τα υποχρεωτικά πεδία: <b>{newErrors.join(", ")}</b></div>
+                    </div>
+                </div>
+                ),
+                life: 3000
             });
             return;
         }
     
-      const timeRegex = /^(?:[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+        const timeRegex = /^([01]?\d|2[0-3]):[0-5]\d(\s*-\s*([01]?\d|2[0-3]):[0-5]\d)?$/;
 
         if (!timeRegex.test(time)) {
             toast.current.show({ 
                 severity: 'error', 
                 summary: 'Σφάλμα', 
-                detail: 'Παρακαλώ βάλε σωστή ώρα (18:00)', 
+                detail: 'Παραδείγμα Ώρας (7:00 - 14:00) Πρόσεχε τα κενά', 
                 life: 3000 
             });
             return;
@@ -69,12 +83,32 @@ const Schedule = () => {
         setTime('');
     };
 
+    const handleDeleteNote = (rowData) => {
+        setData(prev => prev.filter(n => n !== rowData));
+    };
+
+    const actionBodyTemplate = (rowData) => (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+            <Button 
+                icon="pi pi-pencil" 
+                severity="secondary" 
+                rounded 
+            />
+            <Button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                rounded onClick={() => handleDeleteNote(rowData)} 
+            />
+        </div>
+    );
+
     return (
         <div>
             <h2>Δημιουργία Προγράμματος Εργαζομένων</h2>
             <Toast ref={toast} />
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px' }}>
-                <div>
+            
+            <div>
+                <div className="input-row">
                 <Dropdown 
                     placeholder="Ημέρα" 
                     value={day} 
@@ -82,14 +116,6 @@ const Schedule = () => {
                     onChange={(e) => setDay(e.value)} 
                     className='input-text-schedule'
                 />
-                <InputText 
-                    placeholder="Εργαζόμενοι" 
-                    value={worker} 
-                    onChange={(e) => setWorker(e.target.value)} 
-                    className='input-text-schedule'               
-                />
-                </div>
-                <div>
                 <Dropdown 
                     placeholder="Βάρδια" 
                     value={shift} 
@@ -97,26 +123,50 @@ const Schedule = () => {
                     onChange={(e) => setShift(e.target.value)} 
                     className='input-text-schedule'                
                 />
+                </div>
+            </div>
+            <div className="input-row">
                 <InputText 
-                    placeholder="Ώρες" 
+                    placeholder="Εργαζόμενοι (Χρήστος/Σταυρούλα)" 
+                    value={worker} 
+                    onChange={(e) => setWorker(e.target.value)} 
+                    className='input-text-schedule'               
+                />
+                <InputText 
+                    placeholder="Ώρες (7:00 - 14:00)" 
                     value={time} 
-                     onChange={(e) => setTime(e.target.value)}
+                    onChange={(e) => setTime(e.target.value)}
                     className='input-text-schedule'                
                 />
-                </div>
-                <Button label="Προσθήκη"
-                    className='custom-black-button' 
-                    icon="pi pi-plus" 
-                    onClick={addSchedule}
-                    rounded
-                />
-                
             </div>
+            <div className="button-row" style={{ marginTop: '10px' }}>
+                <Button 
+                    className="custom-black-button" 
+                    label="Προσθήκη" 
+                    icon="pi pi-plus" 
+                    onClick={addSchedule} 
+                    rounded 
+                />
+                <Button 
+                    className="custom-black-button" 
+                    label="Αποθήκευση" 
+                    icon="pi pi-save" 
+                    
+                    rounded 
+                    style={{ marginLeft: '10px' }} 
+                />
+            </div>
+            
             <DataTable value={data} style={{ marginTop: '20px' }}>
                 <Column field="day" header="Ημέρα" />
                 <Column field="worker" header="Εργαζόμενος" />
                 <Column field="shift" header="Βάρδια" />
                 <Column field="time" header="Ώρες" />
+                <Column 
+                    body={actionBodyTemplate} 
+                    header="Διαγραφή" 
+                    style={{ textAlign: 'center', width: '120px' }} 
+                />
             </DataTable>
         </div>
     );
