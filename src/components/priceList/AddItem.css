@@ -1,0 +1,94 @@
+
+.add-item-dialog .p-inputtext,
+.add-item-dialog .p-dropdown {
+    border-radius: 10px;
+    min-width: 250px;       
+    height: 40px;
+    width: 100%;           
+    line-height: 40px;      
+    padding: 0 1em;
+    box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788);
+    border: 1px solid rgba(204, 173, 87, 0.788);
+    transition: all 0.2s;
+    font-weight: bold;
+    text-align: center;
+}
+
+.add-item-dialog .p-inputtext:hover,
+.add-item-dialog .p-inputtext:focus,
+.add-item-dialog .p-dropdown:hover,
+.add-item-dialog .p-dropdown:focus {
+    border-color: rgba(153, 101, 21, 0.9);
+    box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4);
+}
+
+.input-field-wrapper {
+    margin: 10px auto;  
+    display: flex;
+    justify-content: center;
+}
+
+.center-label {
+    display: block;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.save-button-pricelist {
+    display: block;
+    margin: 20px auto;
+    background-color: black !important;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    box-shadow: none !important;
+    outline: none;
+}
+
+.dropdown-status {
+    min-width: 400px;
+    height: 40px;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
+    border: 1px solid rgba(204, 173, 87, 0.788) !important;
+    transition: all 0.2s;
+}
+
+.dropdown-status .p-dropdown-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 1em;
+    font-size: 14px;
+}
+
+.dropdown-status .p-dropdown-trigger {
+    display: none;
+}
+
+.dropdown-status:hover,
+.dropdown-status:focus {
+    border-color: rgba(153, 101, 21, 0.9) !important;
+    box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4) !important;
+}
+
+.p-error {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: block;
+}
+
+.p-toast-message-success {
+    background-color: rgba(153, 101, 21, 0.9) !important;
+    border-left: 6px solid rgba(204, 173, 87, 0.788) !important;
+    border-radius: 10px;
+    color: #fff !important; 
+}
+
+.p-toast-message-success .p-toast-message-icon {
+    color: #fff !important;
+}
