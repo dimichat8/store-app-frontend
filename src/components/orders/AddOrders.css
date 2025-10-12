@@ -46,8 +46,9 @@
 .input-text-order {
     border-radius: 10px;
     padding: 0.5em 1em; 
-    min-width: 500px; 
+    min-width: 200px; 
     min-height: 30px;
+    width: 30%;
     transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
     margin: 20px 20px 20px 20px;
     box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
