@@ -56,8 +56,9 @@
 .input-text-calendar-notes-title {
     border-radius: 10px;
     padding: 0.5em 1em; 
-    min-width: 500px; 
+    min-width: 200px; 
     min-height: 50px;
+    width: 20%;
     transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
     margin: 0 auto 20px auto;
     display: block;
@@ -74,8 +75,9 @@
 .input-text-calendar-notes {
     border-radius: 10px;
     padding: 0.5em 1em; 
-    min-width: 1000px; 
+    min-width: 500px; 
     min-height: 100px;
+    width: 60%;
     transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
     margin: 0 auto 20px auto;
     display: block;

@@ -14,6 +14,7 @@ import 'primeicons/primeicons.css';
 import '../navBar/NavBar.css';
 import Settings from '../settings/Settings';
 import { Dialog } from 'primereact/dialog';
+import NotificationBell from '../notes/NotificationBell';
 
 const NavBar = ({ setImageUrl }) => {
     const [isSettingsVisible, setIsSettingsVisible] = useState(false);
@@ -173,18 +174,17 @@ const NavBar = ({ setImageUrl }) => {
     );
 
     const end = (
-        <div className="flex align-items-center">
-            {!isLoggedIn && (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
+        {!isLoggedIn && (
             <Link to="/" style={{ textDecoration: 'none' }}>
                 <Button label="Είσοδος" icon="pi pi-sign-in" className="custom-black-button" rounded />
             </Link>
-            )}
-            {/* <Button icon="pi pi-cog" className="setting-button" rounded outlined aria-label="Settings" onClick={toggleSettingsVisibility} />
-            <Dialog header="Ρυθμίσεις" visible={isSettingsVisible} onHide={toggleSettingsVisibility} style={{ width: '400px' }}>
-                <Settings />
-            </Dialog> */}
+        )}
+        <div className="notification-bell-wrapper" style={{ display: 'inline-flex', position: 'relative' }}>
+            <NotificationBell />
         </div>
-    );
+    </div>
+);
 
     return (
         <div>

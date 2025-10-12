@@ -65,14 +65,59 @@ class ApiService {
         });
     }
 
+//GET find all notifications 
+    static async findNotificationsByDates(createdAt) {
+        return axios.get(`${API_BASE_URL}/api/note/find/byDates`,{
+            params: { createdAt },
+            headers: { "Content-Type": "application/json" }
+            });
+    }     
+
 //------------ORDERS------------//
 
+//GET find all orders 
     static async findAllOrders() {
         return axios.get(`${API_BASE_URL}/api/orders/find/all`, {
             headers: { "Content-Type": "application/json" }
             });
         }   
+
+//POST add orders
+    static async addOrders(orderList) {
+        return axios.post(`${API_BASE_URL}/api/orders/add`, orderList, {
+            headers: { "Content-Type": "application/json" },
+            });
+        }
+
+//DELETE delete order
+    static async deleteOrder(orderId) {
+        return axios.delete(`${API_BASE_URL}/api/orders/delete/${orderId}`, {
+        headers: { "Content-Type": "application/json" }
+        });
+    }
     
+//------------Schedules------------//
+
+//GET find all schedules 
+    static async findAllSchedules() {
+        return axios.get(`${API_BASE_URL}/api/schedule/find/all`, {
+            headers: { "Content-Type": "application/json" }
+            });
+        }
+
+//POST add orders
+    static async addSchedules(scheduleList) {
+        return axios.post(`${API_BASE_URL}/api/schedule/add`, scheduleList, {
+            headers: { "Content-Type": "application/json" },
+            });
+        }
+
+//DELETE delete order
+    static async deleteSchedule(scheduleId) {
+        return axios.delete(`${API_BASE_URL}/api/schedule/delete/${scheduleId}`, {
+        headers: { "Content-Type": "application/json" }
+        });
+    }        
 }
 
     function formatDateToISO(date) {
