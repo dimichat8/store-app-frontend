@@ -1,0 +1,40 @@
+.notification-bell {
+    color: rgba(204, 173, 87, 0.788) !important; 
+    font-size: 1.8rem;
+    width: 2.8rem;
+    height: 2.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.notification-bell:hover {
+    color: #a0522d !important;
+    transform: scale(1.1);
+    transition: 0.2s;
+}
+
+.notification-bell:focus,
+.notification-bell:active {
+    outline: none !important;
+    box-shadow: 0 0 0 2px #8b4513 !important; 
+    background-color: transparent !important;
+    color: #8b4513 !important;
+}
+
+.notification-bell .p-button-icon {
+    font-size: 1.7rem; 
+}
+
+.notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    transform: scale(0.9);
+}
+
+.p-ripple {
+    color: #8b4513 !important;
+}

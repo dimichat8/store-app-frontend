@@ -10,7 +10,6 @@ import './AddNotes.css';
 import ApiService from '../ApiService';
 import { Toast } from 'primereact/toast'; 
 
-
 const AddNotes = () => {
     const [createdAt, setCreatedAt] = useState(new Date());
     const [title, setTitle] = useState('');
@@ -19,11 +18,29 @@ const AddNotes = () => {
     const toast = React.useRef(null); 
 
     const handleAddNote = () => {
-        if (!title && !content) return;
+    let newErrors = [];
 
-        const formattedDate = createdAt.toISOString().split('T')[0];
+    if (!title) newErrors.push("Τίτλος");
+    if (!content) newErrors.push("Σημείωση");
 
-        setNotesList(prev => [...prev, { title, content, createdAt: formattedDate }]);
+    if (newErrors.length > 0) {
+        toast.current.show({
+            severity: 'warn',
+            content: (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ color: '#f1c40f', fontSize: '1.5rem' }}>⚠️</span> 
+                <div>
+                    <strong>Προσοχή!</strong>
+                    <div>Συμπληρώστε τα υποχρεωτικά πεδία: <b>{newErrors.join(", ")}</b></div>
+                </div>
+            </div>
+            ),
+            life: 3000
+        });
+        return;
+    }
+
+        setNotesList(prev => [...prev, { title, content, createdAt }]);
         setTitle('');
         setNote('');
     };
@@ -33,32 +50,31 @@ const AddNotes = () => {
     };
 
     const handleSaveAll = async () => {
-        console.log("notesList:", notesList);
         if (notesList.length === 0) return;
 
+        const pad = (n) => n < 10 ? '0' + n : n;
         const payload = notesList.map(n => ({
             title: n.title,
             content: n.content,
-            createdAt: n.createdAt,  
-            }))
+            createdAt: `${n.createdAt.getFullYear()}-${pad(n.createdAt.getMonth()+1)}-${pad(n.createdAt.getDate())}`
+        }));
 
         try {
             const response = await ApiService.addNotes(payload);
-            console.log(response.data)
             if (response.status === 200) {
                 toast.current.show({
-                severity: "success",
-                summary: "Επιτυχία",
-                detail: response.data.message,
-                life: 3000,
+                    severity: "success",
+                    summary: "Επιτυχία",
+                    detail: response.data.message,
+                    life: 3000,
                 });
                 setNotesList([]);
             } else {
                 toast.current.show({
-                severity: "warn",
-                summary: "Προειδοποίηση",
-                detail: response.data.message || "Κάτι πήγε στραβά",
-                life: 3000,
+                    severity: "warn",
+                    summary: "Προειδοποίηση",
+                    detail: response.data.message || "Κάτι πήγε στραβά",
+                    life: 3000,
                 });
             }
         } catch (error) {
@@ -73,17 +89,24 @@ const AddNotes = () => {
     };
 
     const actionBodyTemplate = (rowData) => (
-        <Button 
-            icon="pi pi-trash" 
-            className="p-button-danger custom-delete-button" 
-            onClick={() => handleDeleteNote(rowData)}
-            rounded
-        />
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+            <Button 
+                icon="pi pi-pencil" 
+                severity="secondary" 
+                rounded 
+            />
+            <Button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                rounded onClick={() => handleDeleteNote(rowData)} 
+            />
+        </div>
     );
 
     return (
         <div className="calendar-container">
             <Toast ref={toast} />
+
             <Calendar onChange={setCreatedAt} value={createdAt} />
 
             <div className='text-in-center' style={{ marginTop: '10px' }}>
@@ -107,14 +130,14 @@ const AddNotes = () => {
 
             <div style={{ marginTop: '10px' }}>
                 <Button 
-                    label="Προσθήκη Σημείωσης" 
+                    label="Προσθήκη" 
                     icon="pi pi-plus"
                     className='custom-black-button' 
                     onClick={handleAddNote} 
                     rounded
                 />
                 <Button 
-                    label="Αποθήκευση Όλων" 
+                    label="Αποθήκευση" 
                     icon="pi pi-save"
                     className='custom-black-button' 
                     onClick={handleSaveAll} 
@@ -133,7 +156,7 @@ const AddNotes = () => {
                 <Column 
                     field="createdAt" 
                     header="Ημερομηνία" 
-                    body={(row) => new Date(row.createdAt).toLocaleDateString()} 
+                    body={(row) => row.createdAt.toLocaleDateString()} 
                 />
                 <Column 
                     body={actionBodyTemplate} 
