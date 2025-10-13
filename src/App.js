@@ -18,12 +18,12 @@ import SoftDrinks from './components/priceList/drinks/softDrinks/SoftDrinks';
 import Beers from './components/priceList/drinks/beers/Beers';
 import Wines from './components/priceList/drinks/wine/Wines';
 import Drinks from './components/priceList/drinks/drink/Drinks';
-
+import ChatWidget from './components/chat/ChatWidget';
 
 const App = () => {
 
   const [imageUrl, setImageUrl] = useState(null);
-
+  const username = "Mits"; 
   return (
       <Router>
           <>
@@ -49,6 +49,7 @@ const App = () => {
                     <Route path="/notes/add/calendar" element={<AddNotes />} />
                     <Route path="/notes/show/calendar" element={<Notes />} />
                   </Routes>
+                  <ChatWidget username={username} />
               </div>
           </>
       </Router>
