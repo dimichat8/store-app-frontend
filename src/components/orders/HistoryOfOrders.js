@@ -13,12 +13,13 @@ import { Toast } from 'primereact/toast';
 function MyTable() {
     const [values, setValues] = useState([]); 
     const [searchTerm, setSearchTerm] = useState('');
-        const toast = React.useRef(null); 
+    const toast = React.useRef(null); 
     
 
     const filteredValues = values.filter(item => 
         (item.orderName?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (item.description?.toLowerCase().includes(searchTerm.toLowerCase()))
+        (item.description?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (item.createdAt?.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     const fetchOrders = async () => {
