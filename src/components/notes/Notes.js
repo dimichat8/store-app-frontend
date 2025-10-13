@@ -72,7 +72,7 @@ const Notes = () => {
                 />
             </div>      
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', padding: '1rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', padding: '1rem',  justifyContent: 'center' }}>
                 {filteredNotes.map((note, index) => (
                     <Card
                         key={index}
