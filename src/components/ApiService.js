@@ -14,7 +14,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// ✅ Interceptor για Authorization header
+
 api.interceptors.request.use(
   (config) => {
     if (accessToken) {
@@ -25,7 +25,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ Interceptor για refresh token
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -49,7 +49,7 @@ api.interceptors.response.use(
   }
 );
 
-// ✅ Κύριο αντικείμενο υπηρεσίας
+
 const ApiService = {
   // ----------- SECURITY -----------
   setAccessToken,
@@ -60,7 +60,7 @@ const ApiService = {
 
   refreshToken: () => api.post("/api/auth/refresh", {}, { withCredentials: true }),
 
-  // ✅ REGISTER (διορθωμένο)
+
   register: (newItem) => {
     const payload = {
       username: newItem.username,
@@ -98,10 +98,12 @@ const ApiService = {
 
   findNotificationsByDates: (createdAt) =>
     api.get("/api/note/find/byDates", { params: { createdAt } }),
+  deleteNoteById: (noteId) => api.delete(`/api/note/delete/${noteId}`),
 
   // ----------- ORDERS -----------
   findAllOrders: () => api.get("/api/orders/find/all"),
   addOrders: (orderList) => api.post("/api/orders/add", orderList),
+  findGroupedOrders: () => api.get(`/api/orders/by-date`),
   deleteOrder: (orderId) => api.delete(`/api/orders/delete/${orderId}`),
 
   // ----------- SCHEDULES -----------
@@ -110,7 +112,7 @@ const ApiService = {
   deleteSchedule: (scheduleId) => api.delete(`/api/schedule/delete/${scheduleId}`),
 };
 
-// ✅ Helper function
+
 function formatDateToISO(date) {
   const d = new Date(date);
   return d.toISOString().split("T")[0];

@@ -7,7 +7,6 @@ import Breakfast from './priceList/breakfast/Βreakfast';
 import CookedPizza from './priceList/pizza/cookedPizza/CookedPizza';
 import UncookedPizza from './priceList/pizza/uncookedPizza/UncookedPizza';
 import AddOrders from './orders/AddOrders';
-import HistoryOfOrders from './orders/HistoryOfOrders';
 import LoginPage from './login/LoginPage';
 import Settings from './settings/Settings';
 import Schedule from './schedule/Schedule';
@@ -21,6 +20,7 @@ import Drinks from './priceList/drinks/drink/Drinks';
 import ChatWidget from './chat/ChatWidget';
 import PrivateRoute from './PrivateRoute';
 import { useAuth } from './AuthProvider';
+import OrdersTable from './orders/historyOfOrdres/OrdersTable';
 
 const AppContent = () => {
   const [username, setUsername] = useState(null);
@@ -47,7 +47,7 @@ const AppContent = () => {
             <Route path="/beers" element={<Beers />} />
             <Route path="/softdrinks" element={<SoftDrinks />} />
             <Route path="/addorder" element={<AddOrders />} />
-            <Route path="/show/history" element={<HistoryOfOrders />} />
+            <Route path="/show/history" element={<OrdersTable />} />
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/addschedule" element={<AddSchedule />} />
             <Route path="/notes/add/calendar" element={<AddNotes />} />
