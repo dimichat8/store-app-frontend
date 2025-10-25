@@ -1,130 +1,107 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8080"; 
+const API_BASE_URL = "http://localhost:8080";
 
-class ApiService {
+let accessToken = null;
 
-//------------PRICE------------//
-
-// GET find by category
-    static async findByCategory(category) {
-        return axios.get(`${API_BASE_URL}/api/price/find/byCategory`, {
-        params: { category }
-        });
-    }
-
-//------------PRODUCT------------//
-
-//POST add product
-    static async addProduct(product) {
-        return axios.post(`${API_BASE_URL}/api/product/add`, product, {
-            headers: { "Content-Type": "application/json" }
-        });
-    }
-
-    //POST add product
-    static async addProductPrice(productWithPrice) {
-        return axios.post(`${API_BASE_URL}/api/product/add/product/price`, productWithPrice, {
-            headers: { "Content-Type": "application/json" }
-        });
-    }
-
-
-//DELETE delete product
-    static async deleteProduct(productId) {
-        return axios.delete(`${API_BASE_URL}/api/product/delete/${productId}`, {
-        headers: { "Content-Type": "application/json" }
-        });
-    }
-
-//------------NOTES------------//
-
-//GET find notes by title and dates
-    static async findNotesByTitleAndDates(title, dateFrom, dateTo) {
-        return axios.get(`${API_BASE_URL}/api/note/find/byFilters`, {
-            params: {
-                title: title?.trim() || null,
-                dateFrom: dateFrom ? formatDateToISO(dateFrom) : null,
-                dateTo: dateTo ? formatDateToISO(dateTo) : null
-        },
-            headers: { "Content-Type": "application/json" }
-            });
-        }  
-        
-//GET find all notes 
-    static async findAllNotes() {
-        return axios.get(`${API_BASE_URL}/api/note/find/all`, {
-            headers: { "Content-Type": "application/json" }
-            });
-    }         
-
-//POST add notes
-    static async addNotes(notesList) {
-        return axios.post(`${API_BASE_URL}/api/note/add`, notesList, {
-        headers: { "Content-Type": "application/json" },
-        });
-    }
-
-//GET find all notifications 
-    static async findNotificationsByDates(createdAt) {
-        return axios.get(`${API_BASE_URL}/api/note/find/byDates`,{
-            params: { createdAt },
-            headers: { "Content-Type": "application/json" }
-            });
-    }     
-
-//------------ORDERS------------//
-
-//GET find all orders 
-    static async findAllOrders() {
-        return axios.get(`${API_BASE_URL}/api/orders/find/all`, {
-            headers: { "Content-Type": "application/json" }
-            });
-        }   
-
-//POST add orders
-    static async addOrders(orderList) {
-        return axios.post(`${API_BASE_URL}/api/orders/add`, orderList, {
-            headers: { "Content-Type": "application/json" },
-            });
-        }
-
-//DELETE delete order
-    static async deleteOrder(orderId) {
-        return axios.delete(`${API_BASE_URL}/api/orders/delete/${orderId}`, {
-        headers: { "Content-Type": "application/json" }
-        });
-    }
-    
-//------------Schedules------------//
-
-//GET find all schedules 
-    static async findAllSchedules() {
-        return axios.get(`${API_BASE_URL}/api/schedule/find/all`, {
-            headers: { "Content-Type": "application/json" }
-            });
-        }
-
-//POST add orders
-    static async addSchedules(scheduleList) {
-        return axios.post(`${API_BASE_URL}/api/schedule/add`, scheduleList, {
-            headers: { "Content-Type": "application/json" },
-            });
-        }
-
-//DELETE delete order
-    static async deleteSchedule(scheduleId) {
-        return axios.delete(`${API_BASE_URL}/api/schedule/delete/${scheduleId}`, {
-        headers: { "Content-Type": "application/json" }
-        });
-    }        
+export function setAccessToken(token) {
+  accessToken = token;
 }
 
-    function formatDateToISO(date) {
-        const d = new Date(date);
-        return d.toISOString().split('T')[0];
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true, 
+});
+
+api.interceptors.request.use(
+  (config) => {
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken.accessToken}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const refreshResponse = await api.post("/api/auth/refresh", {}, { withCredentials: true });
+        if (refreshResponse.data?.data) {
+          setAccessToken(refreshResponse.data.data);
+          originalRequest.headers["Authorization"] = `Bearer ${refreshResponse.data.data}`;
+          return api(originalRequest);
+        }
+      } catch {
+        window.location.href = "/"; 
+      }
     }
 
+    return Promise.reject(error);
+  }
+);
 
+const ApiService = {
+
+
+  //SECURITY
+  setAccessToken,
+  login: (username, password) => api.post("/api/auth/login", { username, password }),
+  logout: () => api.post("/api/auth/logout", {}, { withCredentials: true }),
+  refreshToken: () => api.post("/api/auth/refresh", {}, { withCredentials: true }),
+  register: (newItem) => {
+    const payload = {
+      username: newItem.username,
+      password: newItem.password,
+      email: newItem.email,
+      roles: [{ name: newItem.roles || "USER" }],
+    };
+    return api.post("/api/auth/register", payload);
+  },
+
+  // PRICE
+  findByCategory: (category) => api.get("/api/price/find/byCategory", { params: { category } }),
+
+  // PRODUCT
+  addProduct: (product) => api.post("/api/product/add", product),
+  addProductPrice: (productWithPrice) => api.post("/api/product/add/product/price", productWithPrice),
+  deleteProduct: (productId) => api.delete(`/api/product/delete/${productId}`),
+
+  // NOTES
+  findNotesByTitleAndDates: (title, dateFrom, dateTo) =>
+    api.get("/api/note/find/byFilters", {
+      params: {
+        title: title?.trim() || null,
+        dateFrom: dateFrom ? formatDateToISO(dateFrom) : null,
+        dateTo: dateTo ? formatDateToISO(dateTo) : null,
+      },
+    }),
+  findAllNotes: () => api.get("/api/note/find/all"),
+  addNotes: (notesList) => api.post("/api/note/add", notesList),
+  findNotificationsByDates: (createdAt) =>
+    api.get("/api/note/find/byDates", { params: { createdAt } }),
+
+  // ORDERS
+  findAllOrders: () => api.get("/api/orders/find/all"),
+  addOrders: (orderList) => api.post("/api/orders/add", orderList),
+  deleteOrder: (orderId) => api.delete(`/api/orders/delete/${orderId}`),
+
+  // SCHEDULES
+  findAllSchedules: () => api.get("/api/schedule/find/all"),
+  addSchedules: (scheduleList) => api.post("/api/schedule/add", scheduleList),
+  deleteSchedule: (scheduleId) => api.delete(`/api/schedule/delete/${scheduleId}`),
+};
+
+function formatDateToISO(date) {
+  const d = new Date(date);
+  return d.toISOString().split('T')[0];
+}
 
 export default ApiService;
+export { api };

@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.12.1",
     "lucide-react": "^0.545.0",
+    "jwt-decode": "^4.0.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.4",
     "react": "^19.0.0",
