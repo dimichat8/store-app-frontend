@@ -4,6 +4,8 @@ import './Notes.css';
 import { Calendar } from 'primereact/calendar';
 import { InputText } from 'primereact/inputtext';
 import ApiService from '../ApiService';
+import { Button } from 'primereact/button';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 
 const Notes = () => {
@@ -25,6 +27,28 @@ const Notes = () => {
         fetchAllNotes();
     }, []);
 
+    const handleDeleteNote = async (noteId) => {
+        try {
+            await ApiService.deleteNoteById(noteId);
+            setNotes(prev => prev.filter(note => note.id !== noteId));
+        } catch (error) {
+            console.error("Σφάλμα κατά τη διαγραφή:", error);
+        }
+    };
+
+    const confirmDelete = (noteId) => {
+        confirmDialog({
+            message: 'Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή τη σημείωση;',
+            header: 'Επιβεβαίωση Διαγραφής',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Ναι',
+            rejectLabel: 'Όχι',
+            acceptClassName: 'custom-accept-button',
+            rejectClassName: 'custom-reject-button',
+            accept: () => handleDeleteNote(noteId),
+        });
+    };
+
     const filteredNotes = notes.filter((note) => {
         const matchesTitle =
             !title || (note.title && note.title.toLowerCase().includes(title.toLowerCase()));
@@ -42,6 +66,7 @@ const Notes = () => {
 
     return (
         <div>
+            <ConfirmDialog />
             <div>
                 <InputText
                     value={title} 
@@ -73,19 +98,38 @@ const Notes = () => {
             </div>      
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', padding: '1rem',  justifyContent: 'center' }}>
-                {filteredNotes.map((note, index) => (
-                    <Card
-                        key={index}
-                        title={`${note.title} | ${note.createdAt}`}
-                        style={{
-                            width: '25rem',
-                            border: '1px solid rgba(204, 173, 87, 0.788)',
-                            borderRadius: '8px'
-                        }}
-                    >
-                        <p className="m-0" style={{ lineHeight: '1.5' }}>{note.content}</p>
-                    </Card>
-                ))}
+                {filteredNotes
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    .map((note, index) => (
+                        <Card
+                            key={index}
+                            title={`${note.title} | ${note.createdAt}`}
+                            style={{
+                                width: '25rem',
+                                border: '1px solid rgba(204, 173, 87, 0.788)',
+                                borderRadius: '8px',
+                                position: 'relative', 
+                                paddingBottom: '3rem' 
+                            }}
+                        >
+                            <p className="card-content" style={{ lineHeight: '1.5' }}>{note.content}</p>
+
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '10px',
+                                right: '10px'
+                            }}>
+                                <Button 
+                                    icon="pi pi-trash"
+                                    className="p-button-danger p-button-rounded"
+                                    size="small"
+                                    onClick={() => confirmDelete(note.id)}
+                                    tooltip="Διαγραφή"
+                                />
+                            </div>
+                        </Card>
+                    ))
+                }
             </div>
         </div>
     );

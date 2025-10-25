@@ -19,9 +19,9 @@
 .notification-bell:focus,
 .notification-bell:active {
     outline: none !important;
-    box-shadow: 0 0 0 2px #8b4513 !important; 
+    box-shadow: 0 0 0 2px rgba(197, 161, 62, 0.788) !important; 
     background-color: transparent !important;
-    color: #8b4513 !important;
+    color: rgba(197, 161, 62, 0.788) !important;
 }
 
 .notification-bell .p-button-icon {
@@ -37,4 +37,35 @@
 
 .p-ripple {
     color: #8b4513 !important;
+}
+
+.notification-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* τίτλος: έως 25 χαρακτήρες */
+.notification-title {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  color: #222;
+}
+
+/* περιεχόμενο: έως 3 γραμμές, μετά ... */
+.notification-content {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* έως 3 γραμμές */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
+  color: #444;
+  line-height: 1.5;
+  margin: 0.3rem 0 0 0;
 }
