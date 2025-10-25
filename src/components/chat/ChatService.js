@@ -4,7 +4,7 @@ import { Client } from "@stomp/stompjs";
 let stompClient = null;
 
 export const connect = (username, onMessageReceived) => {
-  const socket = new SockJS("http://localhost:8080/ws"); // το endpoint του backend
+  const socket = new SockJS("http://localhost:8080/ws");
   stompClient = new Client({
     webSocketFactory: () => socket,
     reconnectDelay: 5000,

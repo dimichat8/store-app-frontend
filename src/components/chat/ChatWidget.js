@@ -10,7 +10,6 @@ const ChatWidget = ({ username }) => {
 
   return (
     <>
-      {/* Floating Chat Icon */}
       {!visible && (
         <div
           onClick={() => setVisible(true)}
@@ -20,7 +19,6 @@ const ChatWidget = ({ username }) => {
         </div>
       )}
 
-      {/* PrimeReact Dialog */}
         <Dialog
             visible={visible}
             onHide={() => setVisible(false)}
