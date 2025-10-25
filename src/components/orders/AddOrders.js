@@ -105,7 +105,14 @@ const AddOrders = () => {
             <div className="card">
                 <Toast ref={toast} />
 
-                <div className="input-row">
+                <div className="input-row"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddOrder();
+                        }
+                    }}
+                >
                     <InputText 
                         className="input-text-order" 
                         placeholder="Όνομα Προϊόντος" 
