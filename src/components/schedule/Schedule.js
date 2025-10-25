@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import 'primereact/resources/themes/saga-blue/theme.css';
@@ -6,38 +6,54 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
 const Schedule = () => {
+    const [expandedRows, setExpandedRows] = useState([]);
+
     const data = [
-        { day: 'Δευτέρα', worker: 'Γιάννης/Ελένη', shift: 'Πρωί', time: '09:00 - 13:00' },
-        { day: 'Δευτέρα', worker: 'Θωμαή', shift: 'Πρωί', time: '09:00 - 11:00' },
-        { day: 'Δευτέρα', worker: 'Μάγδα/Αλέξανδρος', shift: 'Βράδυ', time: '17:00 - 21:00' },
-        
-        { day: 'Τρίτη', worker: 'Βασίλης/Αννα', shift: 'Πρωί', time: '09:00 - 13:00' },
-        { day: 'Τρίτη', worker: 'Δημήτρης', shift: 'Βράδυ', time: '17:00 - 20:00' },
-    
-        { day: 'Τετάρτη', worker: 'Σπύρος/Κατερίνα', shift: 'Πρωί', time: '09:00 - 13:00' },
-        { day: 'Τετάρτη', worker: 'Θωμαής', shift: 'Βράδυ', time: '17:00 - 21:00' },
-        
-        { day: 'Πέμπτη', worker: 'Γιώργος', shift: 'Πρωί', time: '09:00 - 13:00' },
-        { day: 'Πέμπτη', worker: 'Αλεξάνδρα/Βασίλης', shift: 'Βράδυ', time: '17:00 - 20:00' },
-    
-        { day: 'Παρασκευή', worker: 'Παύλος/Κατερίνα', shift: 'Πρωί', time: '09:00 - 13:00' },
-        { day: 'Παρασκευή', worker: 'Ιωάννα', shift: 'Βράδυ', time: '17:00 - 21:00' },
-    
-        { day: 'Σάββατο', worker: 'Δημήτρης', shift: 'Πρωί', time: '10:00 - 14:00' },
-        { day: 'Σάββατο', worker: 'Μαρία/Ανδρέας', shift: 'Βράδυ', time: '18:00 - 22:00' },
-    
-        { day: 'Κυριακή', worker: 'Σπύρος/Κατερίνα', shift: 'Πρωί', time: '10:00 - 14:00' },
-        { day: 'Κυριακή', worker: 'Γιάννης/Βασίλης', shift: 'Βράδυ', time: '18:00 - 20:00' },
+        { from: '14/10/2025', to: '20/10/2025', worker: 'Γιάννης', shift: 'Πρωί', time: '09:00 - 13:00' },
+        { from: '14/10/2025', to: '20/10/2025', worker: 'Ελένη', shift: 'Βράδυ', time: '17:00 - 21:00' },
+        { from: '14/10/2025', to: '27/10/2025', worker: 'Μάγδα', shift: 'Πρωί', time: '09:00 - 12:00' },
+        { from: '21/10/2025', to: '27/10/2025', worker: 'Αλέξανδρος', shift: 'Βράδυ', time: '17:00 - 20:00' },
+        { from: '28/10/2025', to: '03/11/2025', worker: 'Βασίλης', shift: 'Πρωί', time: '10:00 - 14:00' },
+        { from: '28/10/2025', to: '03/11/2025', worker: 'Άννα', shift: 'Βράδυ', time: '18:00 - 22:00' }
     ];
 
+    
+    const grouped = Object.values(
+        data.reduce((acc, item) => {
+            const key = `${item.from}_${item.to}`;
+            if (!acc[key]) {
+                acc[key] = { from: item.from, to: item.to, shifts: [] };
+            }
+            acc[key].shifts.push(item);
+            return acc;
+        }, {})
+    );
+
+    const rowExpansionTemplate = (rowData) => (
+        <div className="p-3">
+            <DataTable value={rowData.shifts} responsiveLayout="scroll" tableStyle={{ minWidth: '30rem' }}>
+                <Column field="worker" header="Εργαζόμενος" style={{ width: '40%' }} />
+                <Column field="shift" header="Βάρδια" style={{ width: '30%' }} />
+                <Column field="time" header="Ώρες" style={{ width: '30%' }} />
+            </DataTable>
+        </div>
+    );
+
     return (
-        <div>
-            <h2>Πρόγραμμα Εργαζομένων</h2>
-            <DataTable value={data}>
-                <Column field="day" header="Ημέρα" />
-                <Column field="worker" header="Εργαζόμενος" />
-                <Column field="shift" header="Βάρδια" />
-                <Column field="time" header="Ώρες" />
+        <div className="card p-4">
+            <h2 className="mb-3">Πρόγραμμα Εργασίας</h2>
+
+            <DataTable
+                value={grouped}
+                expandedRows={expandedRows}
+                onRowToggle={(e) => setExpandedRows(e.data)}
+                rowExpansionTemplate={rowExpansionTemplate}
+                dataKey={(row) => `${row.from}_${row.to}`} // μοναδικό key για from+to
+                tableStyle={{ minWidth: '50rem' }}
+            >
+                <Column header="Προβολή" expander style={{ width: '3rem' }} />
+                <Column field="from" header="Ημερομηνία Από" style={{ width: '30%' }} />
+                <Column field="to" header="Ημερομηνία Έως" style={{ width: '30%' }} />
             </DataTable>
         </div>
     );
