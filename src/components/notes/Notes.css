@@ -169,3 +169,14 @@ body {
     border: 1px solid rgba(160, 134, 65, 0.788) !important;
     font-size: 1.2rem !important;
 }
+
+.card-content {
+    white-space: normal; 
+    word-wrap: break-word; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical;
+    line-height: 1.5;
+}

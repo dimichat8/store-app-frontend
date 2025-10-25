@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { DataTable } from 'primereact/datatable';
@@ -6,39 +6,38 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button'; 
+import { Toast } from 'primereact/toast'; 
 import './AddNotes.css';
 import ApiService from '../ApiService';
-import { Toast } from 'primereact/toast'; 
 
 const AddNotes = () => {
     const [createdAt, setCreatedAt] = useState(new Date());
     const [title, setTitle] = useState('');
     const [content, setNote] = useState('');
     const [notesList, setNotesList] = useState([]);
-    const toast = React.useRef(null); 
+    const toast = useRef(null); 
 
     const handleAddNote = () => {
-    let newErrors = [];
+        let newErrors = [];
+        if (!title) newErrors.push("Τίτλος");
+        if (!content) newErrors.push("Σημείωση");
 
-    if (!title) newErrors.push("Τίτλος");
-    if (!content) newErrors.push("Σημείωση");
-
-    if (newErrors.length > 0) {
-        toast.current.show({
-            severity: 'warn',
-            content: (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ color: '#f1c40f', fontSize: '1.5rem' }}>⚠️</span> 
-                <div>
-                    <strong>Προσοχή!</strong>
-                    <div>Συμπληρώστε τα υποχρεωτικά πεδία: <b>{newErrors.join(", ")}</b></div>
-                </div>
-            </div>
-            ),
-            life: 3000
-        });
-        return;
-    }
+        if (newErrors.length > 0) {
+            toast.current.show({
+                severity: 'warn',
+                content: (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ color: '#f1c40f', fontSize: '1.5rem' }}>⚠️</span> 
+                        <div>
+                            <strong>Προσοχή!</strong>
+                            <div>Συμπληρώστε τα υποχρεωτικά πεδία: <b>{newErrors.join(", ")}</b></div>
+                        </div>
+                    </div>
+                ),
+                life: 3000
+            });
+            return;
+        }
 
         setNotesList(prev => [...prev, { title, content, createdAt }]);
         setTitle('');
@@ -90,16 +89,8 @@ const AddNotes = () => {
 
     const actionBodyTemplate = (rowData) => (
         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-            <Button 
-                icon="pi pi-pencil" 
-                severity="secondary" 
-                rounded 
-            />
-            <Button 
-                icon="pi pi-trash" 
-                severity="danger" 
-                rounded onClick={() => handleDeleteNote(rowData)} 
-            />
+            <Button icon="pi pi-pencil" severity="secondary" rounded />
+            <Button icon="pi pi-trash" severity="danger" rounded onClick={() => handleDeleteNote(rowData)} />
         </div>
     );
 
@@ -115,9 +106,14 @@ const AddNotes = () => {
 
             <InputText 
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Τίτλος.."
+                onChange={(e) => {
+                    if (e.target.value.length <= 25) {
+                        setTitle(e.target.value);
+                    }
+                }}
+                placeholder="Τίτλος.. (μέχρι 25 χαρακτήρες)"
                 className='input-text-calendar-notes-title'
+                onKeyDown={(e) => e.key === 'Enter' && handleAddNote()} 
             />
 
             <InputTextarea 
@@ -126,43 +122,19 @@ const AddNotes = () => {
                 placeholder="Σημείωση.."
                 className='input-text-calendar-notes'
                 style={{ marginTop: '10px' }}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddNote()} 
             />
 
             <div style={{ marginTop: '10px' }}>
-                <Button 
-                    label="Προσθήκη" 
-                    icon="pi pi-plus"
-                    className='custom-black-button' 
-                    onClick={handleAddNote} 
-                    rounded
-                />
-                <Button 
-                    label="Αποθήκευση" 
-                    icon="pi pi-save"
-                    className='custom-black-button' 
-                    onClick={handleSaveAll} 
-                    rounded
-                    style={{ marginLeft: '10px' }}
-                />
+                <Button label="Προσθήκη" icon="pi pi-plus" className='custom-black-button' onClick={handleAddNote} rounded />
+                <Button label="Αποθήκευση" icon="pi pi-save" className='custom-black-button' onClick={handleSaveAll} rounded style={{ marginLeft: '10px' }} />
             </div>
 
-            <DataTable
-                value={notesList}
-                className="datatable-notes"
-                style={{ marginTop: '20px' }}
-            >
+            <DataTable value={notesList} className="datatable-notes" style={{ marginTop: '20px' }}>
                 <Column field="title" header="Τίτλος" />        
                 <Column field="content" header="Σημειώσεις" />
-                <Column 
-                    field="createdAt" 
-                    header="Ημερομηνία" 
-                    body={(row) => row.createdAt.toLocaleDateString()} 
-                />
-                <Column 
-                    body={actionBodyTemplate} 
-                    header="Διαγραφή" 
-                    style={{ textAlign: 'center', width: '120px' }} 
-                />
+                <Column field="createdAt" header="Ημερομηνία" body={(row) => row.createdAt.toLocaleDateString()} />
+                <Column body={actionBodyTemplate} header="Διαγραφή" style={{ textAlign: 'center', width: '120px' }} />
             </DataTable>
         </div>
     );

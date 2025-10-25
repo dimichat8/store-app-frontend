@@ -70,7 +70,7 @@ function NotificationBell() {
             {todayNotifications.map((n, index) => (
               <div key={n.id} className="notification-item" style={{ marginBottom: '10px' }}>
                 <strong>{index + 1}. {n.title}</strong>
-                <p>{n.content}</p>
+                <p className="notification-content">{n.content}</p>
               </div>
             ))}
           </div>
