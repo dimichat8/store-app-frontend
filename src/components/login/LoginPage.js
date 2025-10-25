@@ -44,7 +44,8 @@ const LoginPage = () => {
         const success = await login(username, password);
 
         if (success) {
-            navigate('/home');
+            toast.current.show({ severity: 'success', summary: 'Επιτυχής είσοδος', detail: 'Καλώς ήρθατε!', life: 2000 });
+            setTimeout(() => navigate('/home'), 1000); 
         } else {
             toast.current.show({ severity: 'error', summary: 'Αποτυχημένη είσοδος', detail: 'Λανθασμένα στοιχεία ή πρόβλημα σύνδεσης', sticky: true });
         }

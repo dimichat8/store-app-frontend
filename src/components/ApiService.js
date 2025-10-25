@@ -11,19 +11,21 @@ export function setAccessToken(token) {
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
-  withCredentials: true, 
+  withCredentials: true,
 });
 
+// ✅ Interceptor για Authorization header
 api.interceptors.request.use(
   (config) => {
     if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken.accessToken}`;
+      config.headers["Authorization"] = `Bearer ${accessToken.accessToken || accessToken}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
+// ✅ Interceptor για refresh token
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -39,7 +41,7 @@ api.interceptors.response.use(
           return api(originalRequest);
         }
       } catch {
-        window.location.href = "/"; 
+        window.location.href = "/";
       }
     }
 
@@ -47,33 +49,41 @@ api.interceptors.response.use(
   }
 );
 
+// ✅ Κύριο αντικείμενο υπηρεσίας
 const ApiService = {
-
-
-  //SECURITY
+  // ----------- SECURITY -----------
   setAccessToken,
+
   login: (username, password) => api.post("/api/auth/login", { username, password }),
+
   logout: () => api.post("/api/auth/logout", {}, { withCredentials: true }),
+
   refreshToken: () => api.post("/api/auth/refresh", {}, { withCredentials: true }),
+
+  // ✅ REGISTER (διορθωμένο)
   register: (newItem) => {
     const payload = {
       username: newItem.username,
       password: newItem.password,
       email: newItem.email,
-      roles: [{ name: newItem.roles || "USER" }],
+      roles: [{ name: newItem.roles || "ROLE_USER" }],
     };
     return api.post("/api/auth/register", payload);
   },
 
-  // PRICE
-  findByCategory: (category) => api.get("/api/price/find/byCategory", { params: { category } }),
+  // ----------- PRICE -----------
+  findByCategory: (category) =>
+    api.get("/api/price/find/byCategory", { params: { category } }),
 
-  // PRODUCT
+  // ----------- PRODUCT -----------
   addProduct: (product) => api.post("/api/product/add", product),
-  addProductPrice: (productWithPrice) => api.post("/api/product/add/product/price", productWithPrice),
+
+  addProductPrice: (productWithPrice) =>
+    api.post("/api/product/add/product/price", productWithPrice),
+
   deleteProduct: (productId) => api.delete(`/api/product/delete/${productId}`),
 
-  // NOTES
+  // ----------- NOTES -----------
   findNotesByTitleAndDates: (title, dateFrom, dateTo) =>
     api.get("/api/note/find/byFilters", {
       params: {
@@ -82,25 +92,28 @@ const ApiService = {
         dateTo: dateTo ? formatDateToISO(dateTo) : null,
       },
     }),
+
   findAllNotes: () => api.get("/api/note/find/all"),
   addNotes: (notesList) => api.post("/api/note/add", notesList),
+
   findNotificationsByDates: (createdAt) =>
     api.get("/api/note/find/byDates", { params: { createdAt } }),
 
-  // ORDERS
+  // ----------- ORDERS -----------
   findAllOrders: () => api.get("/api/orders/find/all"),
   addOrders: (orderList) => api.post("/api/orders/add", orderList),
   deleteOrder: (orderId) => api.delete(`/api/orders/delete/${orderId}`),
 
-  // SCHEDULES
+  // ----------- SCHEDULES -----------
   findAllSchedules: () => api.get("/api/schedule/find/all"),
   addSchedules: (scheduleList) => api.post("/api/schedule/add", scheduleList),
   deleteSchedule: (scheduleId) => api.delete(`/api/schedule/delete/${scheduleId}`),
 };
 
+// ✅ Helper function
 function formatDateToISO(date) {
   const d = new Date(date);
-  return d.toISOString().split('T')[0];
+  return d.toISOString().split("T")[0];
 }
 
 export default ApiService;
