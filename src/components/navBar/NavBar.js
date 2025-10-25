@@ -7,26 +7,18 @@ import {
     faWineBottle, faFolderOpen, faBookMedical, faClockRotateLeft,
     faCalendarDays, faCalendarPlus, faBookOpen, faNotesMedical, faClipboard
 } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate  } from 'react-router-dom'; 
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import '../navBar/NavBar.css';
 import Settings from '../settings/Settings';
-import { Dialog } from 'primereact/dialog';
-import NotificationBell from '../notes/NotificationBell';
+import { useAuth } from '../AuthProvider';import NotificationBell from '../notes/NotificationBell';
+import ApiService from '../ApiService';
 
-const NavBar = ({ setImageUrl }) => {
-    const [isSettingsVisible, setIsSettingsVisible] = useState(false);
-    const [isLoggedIn, setLoggedIn] = useState(false);
 
-    const handleLogin = () => {
-        setLoggedIn(true);
-    }
-
-    const toggleSettingsVisibility = () => {
-        setIsSettingsVisible(!isSettingsVisible);
-    };
+const NavBar = ( ) => {
+    const { logout } = useAuth();
 
     const items = [
         {
@@ -175,11 +167,19 @@ const NavBar = ({ setImageUrl }) => {
 
     const end = (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
-        {!isLoggedIn && (
-            <Link to="/" style={{ textDecoration: 'none' }}>
-                <Button label="Είσοδος" icon="pi pi-sign-in" className="custom-black-button" rounded />
-            </Link>
-        )}
+        <Button 
+            label="Αποσύνδεση" 
+            icon="pi pi-sign-out" 
+            className="custom-black-button" 
+            rounded
+            onClick={async () => {
+                try {
+                     await logout();
+                } catch (error) {
+                    console.error('Logout failed:', error);
+                }
+            }}
+        />
         <div className="notification-bell-wrapper" style={{ display: 'inline-flex', position: 'relative' }}>
             <NotificationBell />
         </div>
