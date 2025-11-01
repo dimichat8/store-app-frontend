@@ -1,0 +1,55 @@
+.create-room-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.create-room-form input {
+  padding: 10px 12px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.create-room-form input:focus {
+  border-color: rgba(204, 173, 87, 0.8);
+}
+
+.create-room-form .p-multiselect {
+  font-size: 0.95rem;
+}
+
+.create-room-form button {
+  background-color: rgba(204, 173, 87, 0.8);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.create-room-form button:hover {
+  background-color: rgba(204, 173, 87, 1);
+}
+
+/* Dialog styling */
+.p-dialog {
+  border-radius: 15px;
+}
+
+.p-dialog .p-dialog-header {
+  font-weight: 600;
+  font-size: 1rem;
+  background-color: rgba(204, 173, 87, 0.8);
+  color: #fff;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.p-dialog .p-dialog-content {
+  padding: 20px 10px;
+}

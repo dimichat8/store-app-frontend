@@ -1,0 +1,188 @@
+.chat-floating-icon {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  background: rgba(204, 173, 87, 0.788);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.chat-floating-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Dialog content setup */
+.chat-dialog .p-dialog-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+/* Κεντρικό container του chat */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Περιεχόμενο (λίστα συνομιλιών ή μηνύματα) */
+.chat-content {
+  flex: 1;             /* καταλαμβάνει όλο το διαθέσιμο ύψος */
+  overflow-y: auto;    /* μόνο το περιεχόμενο scrollάρει */
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Input + κουμπί κολλημένα κάτω */
+.chat-input-container {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  flex-shrink: 0;      /* δεν μικραίνει */
+  background: #fff;
+}
+
+/* Input */
+.chat-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.chat-input:focus {
+  border-color: rgba(204, 173, 87, 0.788);
+}
+
+/* Κουμπί αποστολής */
+.chat-send-btn {
+  background-color: rgba(204, 173, 87, 0.788);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.chat-send-btn:hover {
+  background-color: rgba(204, 173, 87, 1);
+}
+
+/* Μηνύματα */
+.message-item {
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.sent {
+  align-self: flex-end;
+  background-color: rgba(204, 173, 87, 0.788);
+  color: #fff;
+}
+
+.received {
+  align-self: flex-start;
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+/* Λίστα συνομιλιών */
+.chat-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.chat-item:hover {
+  background-color: #fff3d6;
+}
+
+.chat-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.chat-info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.chat-top-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.chat-last-message {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Κουμπί επιστροφής στο header */
+.close-room-btn {
+  background: transparent;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.chat-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Ολόκληρο ύψος οθόνης */
+  border-right: 1px solid #ddd;
+}
+
+.chatlist-items {
+  flex: 1; /* καταλαμβάνει όλο τον διαθέσιμο χώρο */
+  overflow-y: auto;
+}
+
+.chat-sidebar-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  margin-top: auto; /* σπρώχνει τα κουμπιά κάτω */
+  border-top: 1px solid #ddd;
+}
+
+.chat-sidebar-buttons button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: rgba(204, 173, 87, 0.8);
+  color: #fff;
+  font-weight: 600;
+}
+
+.chat-sidebar-buttons button:hover {
+  background-color: rgba(204, 173, 87, 1);
+}
