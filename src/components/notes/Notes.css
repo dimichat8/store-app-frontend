@@ -180,3 +180,14 @@ body {
     -webkit-box-orient: vertical;
     line-height: 1.5;
 }
+
+
+.p-button.p-button-info.p-button-rounded {
+  background-color: rgba(172, 144, 69, 0.788) !important; 
+  border-color: #A0522D !important;    
+}
+
+.p-button.p-button-info.p-button-rounded:hover {
+  background-color: #8B4513 !important; 
+  border-color: #8B4513 !important;
+}

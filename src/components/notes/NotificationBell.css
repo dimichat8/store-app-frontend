@@ -1,5 +1,5 @@
 .notification-bell {
-    color: rgba(204, 173, 87, 0.788) !important; 
+    color: grey !important; 
     font-size: 1.8rem;
     width: 2.8rem;
     height: 2.8rem;
@@ -11,7 +11,7 @@
 }
 
 .notification-bell:hover {
-    color: #a0522d !important;
+    color: rgba(204, 173, 87, 0.788) !important;
     transform: scale(1.1);
     transition: 0.2s;
 }
@@ -35,9 +35,6 @@
     transform: scale(0.9);
 }
 
-.p-ripple {
-    color: #8b4513 !important;
-}
 
 .notification-list {
   max-height: 400px;
@@ -45,7 +42,6 @@
   padding-right: 5px;
 }
 
-/* τίτλος: έως 25 χαρακτήρες */
 .notification-title {
   display: block;
   max-width: 100%;
@@ -56,10 +52,10 @@
   color: #222;
 }
 
-/* περιεχόμενο: έως 3 γραμμές, μετά ... */
+
 .notification-content {
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* έως 3 γραμμές */
+  -webkit-line-clamp: 3; 
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

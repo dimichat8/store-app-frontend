@@ -6,13 +6,15 @@ import { InputText } from 'primereact/inputtext';
 import ApiService from '../ApiService';
 import { Button } from 'primereact/button';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-
+import { Sidebar } from 'primereact/sidebar';
 
 const Notes = () => {
     const [notes, setNotes] = useState([]);
     const [title, setTitle] = useState('');
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
+    const [visible, setVisible] = useState(false);
+    const [selectedNote, setSelectedNote] = useState(null);
 
     const fetchAllNotes = async () => {
         try {
@@ -54,7 +56,6 @@ const Notes = () => {
             !title || (note.title && note.title.toLowerCase().includes(title.toLowerCase()));
 
         const noteDate = new Date(note.createdAt);
-        
         const fromDate = dateFrom ? new Date(dateFrom.setHours(0,0,0,0)) : null;
         const toDate = dateTo ? new Date(dateTo.setHours(23,59,59,999)) : null;
 
@@ -64,9 +65,28 @@ const Notes = () => {
         return matchesTitle && matchesDateFrom && matchesDateTo;
     });
 
+    const openNoteDetails = (note) => {
+        setSelectedNote(note);
+        setVisible(true);
+    };
+
     return (
         <div>
             <ConfirmDialog />
+
+            <Sidebar visible={visible} position="right" onHide={() => setVisible(false)}>
+                {selectedNote ? (
+                    <div>
+                        <h2>{selectedNote.title}</h2>
+                        <p><b>Ημερομηνία:</b> {selectedNote.createdAt}</p>
+                        <hr />
+                        <p style={{ whiteSpace: 'pre-line' }}>{selectedNote.content}</p>
+                    </div>
+                ) : (
+                    <p>Δεν υπάρχει επιλεγμένη σημείωση.</p>
+                )}
+            </Sidebar>
+
             <div>
                 <InputText
                     value={title} 
@@ -97,7 +117,7 @@ const Notes = () => {
                 />
             </div>      
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', padding: '1rem',  justifyContent: 'center' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', padding: '1rem', justifyContent: 'center' }}>
                 {filteredNotes
                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                     .map((note, index) => (
@@ -109,7 +129,7 @@ const Notes = () => {
                                 border: '1px solid rgba(204, 173, 87, 0.788)',
                                 borderRadius: '8px',
                                 position: 'relative', 
-                                paddingBottom: '3rem' 
+                                paddingBottom: '3rem'
                             }}
                         >
                             <p className="card-content" style={{ lineHeight: '1.5' }}>{note.content}</p>
@@ -117,14 +137,24 @@ const Notes = () => {
                             <div style={{
                                 position: 'absolute',
                                 bottom: '10px',
-                                right: '10px'
+                                right: '10px',
+                                display: 'flex',
+                                gap: '0.5rem'
                             }}>
+                                <Button 
+                                    icon="pi pi-eye"
+                                    className="p-button-info p-button-rounded"
+                                    size="small"
+                                    tooltip="Προβολή"
+                                    onClick={() => openNoteDetails(note)}
+                                />
+
                                 <Button 
                                     icon="pi pi-trash"
                                     className="p-button-danger p-button-rounded"
                                     size="small"
-                                    onClick={() => confirmDelete(note.id)}
                                     tooltip="Διαγραφή"
+                                    onClick={() => confirmDelete(note.id)}
                                 />
                             </div>
                         </Card>
