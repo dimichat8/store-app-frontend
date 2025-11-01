@@ -3,9 +3,10 @@ import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-    faHouseChimney, faEuroSign, faBreadSlice, faCookieBite, faPizzaSlice,
-    faWineBottle, faFolderOpen, faBookMedical, faClockRotateLeft,
-    faCalendarDays, faCalendarPlus, faBookOpen, faNotesMedical, faClipboard
+    faHouseChimney, faEuroSign, faBreadSlice, faCookieBite, 
+    faPizzaSlice, faWineBottle, faFolderOpen, faBookMedical, 
+    faClockRotateLeft, faCommentDots, faCalendarDays, faCalendarPlus, 
+    faBookOpen, faNotesMedical, faClipboard, faListAlt, faInbox
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate  } from 'react-router-dom'; 
 import 'primereact/resources/themes/saga-blue/theme.css';
@@ -13,12 +14,13 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import '../navBar/NavBar.css';
 import Settings from '../settings/Settings';
-import { useAuth } from '../AuthProvider';import NotificationBell from '../notes/NotificationBell';
+import { useAuth } from '../AuthProvider';
+import NotificationBell from '../notes/NotificationBell';
 import ApiService from '../ApiService';
 
 
 const NavBar = ( ) => {
-    const { logout } = useAuth();
+    const { logout, username } = useAuth();
 
     const items = [
         {
@@ -156,6 +158,11 @@ const NavBar = ( ) => {
                 { template: () => <Link to="/notes/show/calendar" className="p-menuitem-link nav-link"><FontAwesomeIcon icon={faClipboard} style={{ marginRight: '0.5em' }} />Σημειώσεις</Link> },
                 { template: () => <Link to="/notes/add/calendar" className="p-menuitem-link nav-link"><FontAwesomeIcon icon={faNotesMedical} style={{ marginRight: '0.5em' }} />Προσθήκη Σημείωσης</Link> }
             ]
+        },
+        {
+            template: () => (
+                    <Link to="/chat/show/all/conversation" className="p-menuitem-link nav-link"><FontAwesomeIcon icon={faCommentDots} style={{ marginRight: '0.5em' }} />Συνομιλίες</Link>
+            )
         }
     ];
 
@@ -167,6 +174,10 @@ const NavBar = ( ) => {
 
     const end = (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
+        <span className="welcome user">
+            Γεία σας 😁 <br />
+            <b>{username ? username : 'Guest'}</b>
+        </span>
         <Button 
             label="Αποσύνδεση" 
             icon="pi pi-sign-out" 

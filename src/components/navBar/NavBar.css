@@ -106,3 +106,9 @@
     width: auto;     
 }
 
+.welcome.user {
+    margin-right: 1rem;
+    color: rgba(204, 173, 87, 0.788) !important;
+
+}
+
