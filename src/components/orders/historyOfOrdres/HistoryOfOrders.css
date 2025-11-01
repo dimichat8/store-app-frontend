@@ -3,3 +3,21 @@
   word-break: break-word;
   hyphens: auto;
 }
+
+.selected-row {
+    background-color: rgba(204, 173, 87, 0.788) !important; 
+    color: white;
+}
+
+.p-checkbox.p-component.p-highlight .p-checkbox-box {
+    background-color: rgba(204, 173, 87, 0.788) !important;
+    border-color: rgba(204, 173, 87, 0.788) !important;
+}
+
+.p-checkbox.p-component.p-highlight .p-checkbox-icon {
+    color: white !important;
+}
+
+.p-checkbox.p-component:hover .p-checkbox-box {
+    border-color: rgba(204, 173, 87, 0.788) !important;
+}

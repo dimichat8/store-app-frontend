@@ -13,6 +13,7 @@ function OrdersTable() {
     const [groups, setGroups] = useState([]);
     const [expandedRows, setExpandedRows] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedOrders, setSelectedOrders] = useState([]); 
     const toast = useRef(null);
 
     const fetchGroupedOrders = async () => {
@@ -75,7 +76,16 @@ function OrdersTable() {
 
         return (
             <div className="p-3">
-                <DataTable value={filteredOrders} responsiveLayout="scroll" tableStyle={{ minWidth: '30rem' }}>
+                <DataTable
+                    value={filteredOrders}
+                    responsiveLayout="scroll"
+                    tableStyle={{ minWidth: '30rem' }}
+                    selection={selectedOrders}
+                    onSelectionChange={(e) => setSelectedOrders(e.value)}
+                    dataKey="id"
+                    rowClassName={(rowData) => selectedOrders.includes(rowData) ? 'selected-row' : ''} 
+                >
+                    <Column selectionMode="multiple" headerStyle={{ width: '3em' }} />
                     <Column field="orderName" header="Ονομα Προϊόντος" style={{ width: '30%' }} />
                     <Column field="description" header="Περιγραφή" style={{ width: '40%' }} />
                     <Column field="quantity" header="Ποσότητα" style={{ width: '15%' }} />
