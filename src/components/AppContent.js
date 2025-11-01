@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import NavBar from './navBar/NavBar';
-import Home from './home/Home';
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import BreadList from './priceList/breadList/BreadList';
 import Breakfast from './priceList/breakfast/Βreakfast';
 import CookedPizza from './priceList/pizza/cookedPizza/CookedPizza';
@@ -21,9 +20,11 @@ import ChatWidget from './chat/ChatWidget';
 import PrivateRoute from './PrivateRoute';
 import { useAuth } from './AuthProvider';
 import OrdersTable from './orders/historyOfOrdres/OrdersTable';
+import Home from './home/Home';
+import CreateRoom from './chat/CreateRoom';
+import ChatList from './chat/ChatScreen';
 
 const AppContent = () => {
-  const [username, setUsername] = useState(null);
   const { accessToken } = useAuth();
   const hideNavBar = !accessToken;
 
@@ -32,9 +33,7 @@ const AppContent = () => {
       {!hideNavBar && <NavBar />}
       <div className="p-m-3">
         <Routes>
-          {/* Public route */}
-          <Route path="/" element={<LoginPage setUsername={setUsername} />} />
-
+          <Route path="/" element={<LoginPage />} />
           <Route element={<PrivateRoute />}>
             <Route path="/home" element={<Home />} />
             <Route path="/settings" element={<Settings />} />
@@ -52,11 +51,11 @@ const AppContent = () => {
             <Route path="/addschedule" element={<AddSchedule />} />
             <Route path="/notes/add/calendar" element={<AddNotes />} />
             <Route path="/notes/show/calendar" element={<Notes />} />
+            <Route path="/chat/show/all/conversation" element={<ChatList />} />
           </Route>
-          <Route path="*" element={<LoginPage setUsername={setUsername} />} />
+          <Route path="*" element={<LoginPage />} />
         </Routes>
-
-        {!hideNavBar && <ChatWidget username={username} />}
+        {!hideNavBar && <ChatWidget />}
       </div>
     </>
   );

@@ -110,6 +110,14 @@ const ApiService = {
   findAllSchedules: () => api.get("/api/schedule/find/all"),
   addSchedules: (scheduleList) => api.post("/api/schedule/add", scheduleList),
   deleteSchedule: (scheduleId) => api.delete(`/api/schedule/delete/${scheduleId}`),
+
+  // ----------- CHAT -----------
+  createRoom: (room) => api.post("/api/chat/room", room),
+  getUserRooms: (userId) => api.get(`/api/chat/rooms/${userId}`),
+  getMessages: (roomId) => api.get(`/api/chat/room/${roomId}/messages`),
+  sendMessage: (roomId, message) => api.post(`/api/chat/room/${roomId}/message`, message),
+  addMembers: (roomId, memberIds) => api.post(`/api/chat/room/${roomId}/members`, memberIds),
+
 };
 
 
