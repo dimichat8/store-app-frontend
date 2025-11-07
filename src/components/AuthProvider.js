@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessTokenState] = useState(null);
   const [username, setUsername] = useState(null);
   const [isAuthInitialized, setAuthInitialized] = useState(false);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
 
@@ -33,7 +34,9 @@ export const AuthProvider = ({ children }) => {
     ApiService.setAccessToken(token);
     try {
       const decodedToken = jwtDecode(token);
-      setUsername(decodedToken.sub); 
+      console.log("Decoded token:", decodedToken);
+      setUsername(decodedToken.sub);
+      setUserId(decodedToken.id || decodedToken.userId || null);
     } catch {
       setUsername(null);
     }
@@ -68,7 +71,7 @@ export const AuthProvider = ({ children }) => {
     };
 
   return (
-    <AuthContext.Provider value={{ accessToken, username, login, logout, isAuthInitialized }}>
+    <AuthContext.Provider value={{ accessToken, username, userId, login, logout, isAuthInitialized }}>
       {children}
     </AuthContext.Provider>
   );

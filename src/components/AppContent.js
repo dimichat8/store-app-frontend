@@ -25,12 +25,14 @@ import CreateRoom from './chat/CreateRoom';
 import ChatList from './chat/ChatScreen';
 
 const AppContent = () => {
-  const { accessToken } = useAuth();
+  const { accessToken, isAuthInitialized } = useAuth();
   const hideNavBar = !accessToken;
+
+const isLoggedIn = isAuthInitialized && Boolean(accessToken);
 
   return (
     <>
-      {!hideNavBar && <NavBar />}
+      {isLoggedIn && <NavBar />}
       <div className="p-m-3">
         <Routes>
           <Route path="/" element={<LoginPage />} />
@@ -55,7 +57,7 @@ const AppContent = () => {
           </Route>
           <Route path="*" element={<LoginPage />} />
         </Routes>
-        {!hideNavBar && <ChatWidget />}
+        {isLoggedIn && <ChatWidget />}
       </div>
     </>
   );

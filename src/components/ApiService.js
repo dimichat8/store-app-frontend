@@ -71,6 +71,40 @@ const ApiService = {
     return api.post("/api/auth/register", payload);
   },
 
+  // ----------- USER -----------
+  getAllUsers: () => api.get("/api/users"),
+
+  getUserById: (userId) => api.get(`/api/users/${userId}`),
+
+  // getUserAvatar: (userId) => api.get(`/api/users/${userId}/avatar`),
+
+  getUserAvatar: async (userId) => {
+    try {
+      const response = await api.get(`/api/users/${userId}/avatar`, {
+        responseType: "blob",
+        validateStatus: (status) => status < 500, // δέχεται 404 χωρίς exception
+      });
+
+      if (response.status === 404 || !response.data) {
+        console.warn(`⚠️ No avatar found for userId ${userId}`);
+        return null; // backend δεν έχει avatar -> fallback
+      }
+
+      const blobUrl = URL.createObjectURL(response.data);
+      console.log(`✅ Avatar blob created for user ${userId}:`, blobUrl);
+      return blobUrl;
+
+    } catch (error) {
+      console.error(`❌ Error loading avatar for userId ${userId}:`, error);
+      return null; // fallback για οποιοδήποτε άλλο error
+    }
+  },
+
+  updateAvatar: (userId, avatarUrl) => 
+    api.put(`/api/users/${userId}/avatar`, avatarUrl, {
+      headers: { "Content-Type": "application/json" },
+    }),
+
   // ----------- PRICE -----------
   findByCategory: (category) =>
     api.get("/api/price/find/byCategory", { params: { category } }),
