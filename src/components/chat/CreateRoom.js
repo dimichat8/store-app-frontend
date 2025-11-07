@@ -10,16 +10,16 @@ const CreateRoom = ({ visible, onHide, onRoomCreated }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // fetch όλων των χρηστών από backend (mock προς το παρόν)
     const fetchUsers = async () => {
       try {
-        setUsers([
-          { id: 1, name: "Μαρία Παπαδοπούλου" },
-          { id: 2, name: "Νίκος Αντωνίου" },
-          { id: 3, name: "Γιάννης Παπαδόπουλος" },
-        ]);
+        const res = await ApiService.getAllUsers();
+        if (res.status === 200 && res.data) {
+          const usersArray = Array.isArray(res.data.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+          setUsers(usersArray);
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Σφάλμα κατά το fetch χρηστών:", err);
+        setUsers([]);
       }
     };
     fetchUsers();
@@ -33,7 +33,7 @@ const CreateRoom = ({ visible, onHide, onRoomCreated }) => {
     const payload = {
       name: newRoomName,
       type,
-      memberIds: selectedMembers.map(u => u.id),
+      memberIds: selectedMembers.map((u) => u.id),
     };
 
     try {
@@ -41,25 +41,25 @@ const CreateRoom = ({ visible, onHide, onRoomCreated }) => {
       if (res.status === 200 && res.data) {
         console.log("Room created:", res.data);
 
-        // Χρησιμοποίησε το πραγματικό id που επιστρέφει το backend
         const newRoom = {
-          id: res.data.id,   // το πραγματικό id από backend
+          id: res.data.id,
           name: res.data.name || newRoomName,
           avatar: res.data.avatar || "https://i.pravatar.cc/150?img=12",
           lastMessage: "",
           time: "",
-          messages: []
+          messages: [],
         };
 
-        onRoomCreated(newRoom);   // ενημέρωσε το ChatScreen
+        onRoomCreated(newRoom);
         setNewRoomName("");
         setSelectedMembers([]);
         onHide();
+        window.location.reload();
       } else {
-        console.error("Failed to create room");
+        console.error("Αποτυχία δημιουργίας room");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Σφάλμα κατά τη δημιουργία room:", err);
     }
   };
 
@@ -76,17 +76,17 @@ const CreateRoom = ({ visible, onHide, onRoomCreated }) => {
         <input
           type="text"
           placeholder="Όνομα συνομιλίας"
-          value={newRoomName || ""} 
+          value={newRoomName || ""}
           onChange={(e) => setNewRoomName(e.target.value)}
         />
 
         <MultiSelect
-  value={selectedMembers || []}   // Πάντα array
-  options={users || []}           // Πάντα array
-  optionLabel="name"
-  placeholder="Επίλεξε μέλη"
-  onChange={(e) => setSelectedMembers(e.value)}
-/>
+          value={selectedMembers || []}
+          options={users || []}
+          optionLabel="username"
+          placeholder="Επίλεξε μέλη"
+          onChange={(e) => setSelectedMembers(e.value)}
+        />
 
         <button onClick={handleCreateRoom}>Δημιουργία</button>
       </div>

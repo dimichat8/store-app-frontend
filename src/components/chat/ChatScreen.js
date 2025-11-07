@@ -3,68 +3,94 @@ import { useNavigate } from 'react-router-dom';
 import CreateRoom from "./CreateRoom";
 import ApiService from "../ApiService";
 import "./ChatScreen.css";
+import { useAuth } from '../AuthProvider';
 
 const ChatScreen = () => {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [createDialogVisible, setCreateDialogVisible] = useState(false);
   const [newMessage, setNewMessage] = useState("");
+  const [avatars, setAvatars] = useState({}); 
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
+  const { userId } = useAuth();
+  const currentUserId = userId || 1;
 
-  const currentUserId = 1; // Από JWT ή context
+  const fetchUserAvatar = async (id) => {
+    if (!id || avatars[id]) return;
+
+    try {
+      const avatarUrl = await ApiService.getUserAvatar(id);
+      setAvatars(prev => ({ ...prev, [id]: avatarUrl }));
+    } catch (err) {
+      console.error("Failed to load avatar for userId:", id, err);
+      setAvatars(prev => ({ ...prev, [id]: "https://i.pravatar.cc/150?img=12" }));
+    }
+  };
 
   useEffect(() => {
+    if (!userId) return;
+
     const fetchUserRooms = async () => {
       try {
-        const res = await ApiService.getUserRooms(currentUserId);
-        if (res.status === 200) setChats(res.data.data || []);
+        const res = await ApiService.getUserRooms(userId);
+        if (res.status === 200 && Array.isArray(res.data.data)) {
+          const rooms = res.data.data.map(chat => ({
+            ...chat,
+            members: (chat.memberIds || []).map(id => ({ id }))
+          }));
+          setChats(rooms);
+
+          rooms.forEach(chat => chat.members.forEach(member => fetchUserAvatar(member.id)));
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching user rooms:", err);
       }
     };
+
     fetchUserRooms();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [selectedChat]);
 
-  const handleRoomCreated = (newRoom) => {
-  const tempRoom = {
-    id: newRoom?.id || `temp-${Date.now()}`,
-    name: newRoom?.name || "Νέα Συνομιλία", // ή μπορείς να περάσεις το newRoomName από CreateRoom
-    avatar: newRoom?.avatar || "https://i.pravatar.cc/150?img=12",
-    lastMessage: "",
-    time: "",
-    messages: []
-  };
-  setChats(prev => [...prev, tempRoom]);
-  setSelectedChat(newRoom);
-};
-
   const handleSelectChat = async (chat) => {
+    if (!chat) return;
     try {
-      // Φόρτωσε τα μηνύματα από backend
       const res = await ApiService.getMessages(chat.id);
-      console.log(res);
-      const messages = res.status === 200 ? res.data.data || [] : [];
+      const messagesData = res.status === 200 ? res.data.data : [];
+      const messages = Array.isArray(messagesData) ? messagesData : [];
 
-      // Προσάρμοσε τα μηνύματα ώστε να έχουν πεδίο text για ευκολότερη απεικόνιση
       const formattedMessages = messages.map(msg => ({
         id: msg.id,
-        sender: msg.senderUsername,
+        senderId: msg.senderId,
+        sender: msg.senderId === currentUserId ? "Εσύ" : msg.senderUsername,
         text: msg.content
       }));
 
-      setSelectedChat({
-        ...chat,
-        messages: formattedMessages
-      });
+      setSelectedChat({ ...chat, messages: formattedMessages });
     } catch (err) {
-      console.error(err);
-      setSelectedChat(chat); // fallback
+      console.error("Error fetching messages for chat:", chat.id, err);
+      setSelectedChat(chat);
     }
+  };
+
+  const handleRoomCreated = (newRoom) => {
+    if (!newRoom) return;
+
+    const tempRoom = {
+      id: newRoom?.id || `temp-${Date.now()}`,
+      name: newRoom?.name || "Νέα Συνομιλία",
+      members: newRoom?.members || [],
+      lastMessage: "",
+      time: "",
+      messages: []
+    };
+    setChats(prev => [...prev, tempRoom]);
+    setSelectedChat(tempRoom);
+
+    tempRoom.members.forEach(member => fetchUserAvatar(member.id));
   };
 
   const handleSendMessage = async () => {
@@ -79,9 +105,15 @@ const ChatScreen = () => {
     try {
       const res = await ApiService.sendMessage(selectedChat.id, messagePayload);
       if (res.status === 200) {
+        const newMsg = {
+          id: res.data?.data?.id || Date.now(),
+          sender: "Εσύ",
+          senderId: currentUserId,
+          text: newMessage
+        };
         setSelectedChat(prev => ({
           ...prev,
-          messages: [...(prev.messages || []), { sender: "Εσύ", text: newMessage }],
+          messages: [...(prev.messages || []), newMsg],
           lastMessage: newMessage,
           time: "Τώρα"
         }));
@@ -91,7 +123,7 @@ const ChatScreen = () => {
         setNewMessage("");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error sending message:", err);
     }
   };
 
@@ -104,22 +136,34 @@ const ChatScreen = () => {
       <div className="chat-sidebar">
         <h2 className="chatlist-title">Συνομιλίες</h2>
         <div className="chatlist-items">
-          {chats.map(chat => (
-            <div
-              key={chat.id}
-              className={`chat-item ${selectedChat?.id === chat.id ? "active-chat" : ""}`}
-              onClick={() => handleSelectChat(chat)}
-            >
-              <img src={chat.avatar || "https://i.pravatar.cc/150?img=12"} alt={chat.name} className="chat-avatar" />
-              <div className="chat-info">
-                <div className="chat-top-row">
-                  <span className="chat-name">{chat.name}</span>
-                  <span className="chat-time">{chat.time || ""}</span>
+          {chats.map(chat => {
+            const otherMemberId = chat.members?.find(m => m.id !== currentUserId)?.id;
+            const isGroup = chat.members?.length > 2;
+            return (
+              <div
+                key={chat.id}
+                className={`chat-item ${selectedChat?.id === chat.id ? "active-chat" : ""}`}
+                onClick={() => handleSelectChat(chat)}
+              >
+                <img 
+                  src={
+                    isGroup 
+                      ? "https://static.thenounproject.com/png/team-icon-6282673-512.png"   
+                      : avatars[otherMemberId] || "https://i.pravatar.cc/150?img=12"
+                  } 
+                  alt={chat.name || "Avatar"} 
+                  className="chat-avatar" 
+                />
+                <div className="chat-info">
+                  <div className="chat-top-row">
+                    <span className="chat-name">{chat.name}</span>
+                    <span className="chat-time">{chat.time || ""}</span>
+                  </div>
+                  <p className="chat-last-message">{chat.lastMessage || ""}</p>
                 </div>
-                <p className="chat-last-message">{chat.lastMessage || ""}</p>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         <div className="chat-sidebar-buttons">
@@ -133,17 +177,24 @@ const ChatScreen = () => {
         {selectedChat ? (
           <>
             <div className="chat-header">
-              <img src={selectedChat.avatar || "https://i.pravatar.cc/150?img=12"} alt={selectedChat.name} className="chat-avatar-header" />
+              <img 
+                src={avatars[selectedChat.members?.find(m => m.id !== currentUserId)?.id] || "https://i.pravatar.cc/150?img=12"} 
+                alt={selectedChat.name || "Avatar"} 
+                className="chat-avatar-header" 
+              />
               <span className="chat-header-name">{selectedChat.name}</span>
             </div>
 
             <div className="messages-container">
               {(selectedChat.messages || []).map((msg, index) => (
                 <div
-                  key={msg.id ? `msg-${msg.id}` : `msg-${index}-${msg.text}`}
-                  className={`message-item ${msg.sender === "Εσύ" ? "sent" : "received"}`}
+                  key={msg.id ? `msg-${msg.id}` : `msg-${index}-${msg.text}` }
+                  className={`message-wrapper ${msg.senderId === currentUserId ? "sent-wrapper" : "received-wrapper"}`}
                 >
-                  {msg.text}
+                  <div className="sender-name">{msg.sender}</div>
+                  <div className={`message-item ${msg.senderId === currentUserId ? "sent" : "received"}`}>
+                    <div className="message-bubble">{msg.text}</div>
+                  </div>
                 </div>
               ))}
               <div ref={messagesEndRef} />

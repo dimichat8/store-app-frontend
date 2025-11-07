@@ -1,13 +1,13 @@
 .chat-screen {
-  position: fixed; /* πάντα στην οθόνη */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh; /* όλο το ύψος της οθόνης */
+  height: 100vh;
   display: flex;
   font-family: Arial, sans-serif;
   background: #f5f5f5;
-  z-index: 1000; /* πάνω από όλα τα άλλα στοιχεία */
+  z-index: 1000;
 }
 
 /* Sidebar */
@@ -109,32 +109,64 @@
 
 /* Messages area */
 .messages-container {
-  flex: 1; /* καταλαμβάνει όλο το διαθέσιμο ύψος */
+  flex: 1;
   padding: 12px 16px;
-  overflow-y: auto; /* μόνο αυτό scroll */
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Μηνύματα */
-.message-item {
-  max-width: 70%;
+/* Wrapper για κάθε μήνυμα */
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 6px;
+  max-width: 70%; /* max πλάτος bubble */
+}
+
+/* Sender name - πάνω από το bubble, bold και με padding */
+.sender-name {
+  font-weight: bold;
+  font-size: 0.75rem;
+  color: #555;
+  margin-bottom: 4px;
+  padding-left: 8px; /* ελαφριά εσοχή */
+}
+
+/* Bubble μηνύματος */
+.message-bubble {
   padding: 8px 12px;
   border-radius: 20px;
   font-size: 0.9rem;
+  display: inline-block; /* για να επεκτείνεται μόνο όσο είναι το κείμενο */
+  max-width: 100%;       /* να μην ξεπερνάει το wrapper */
+  word-wrap: break-word; /* να σπάει λέξεις αν χρειαστεί */
 }
 
-.sent {
-  align-self: flex-end;
+/* Αποστολέας (δεξιά) */
+.sent .message-bubble {
   background-color: rgba(204, 173, 87, 0.788);
   color: #fff;
+  text-align: right;
+  align-self: flex-end;
 }
 
-.received {
-  align-self: flex-start;
+/* Λαμβανόμενος (αριστερά) */
+.received .message-bubble {
   background-color: #e0e0e0;
   color: #333;
+  text-align: left;
+  align-self: flex-start;
+}
+
+/* Προαιρετικά: διαφορά εσοχής δεξιά/αριστερά */
+.sent-wrapper {
+  align-self: flex-end;
+}
+
+.received-wrapper {
+  align-self: flex-start;
 }
 
 /* Input κολλημένο πάντα κάτω */
