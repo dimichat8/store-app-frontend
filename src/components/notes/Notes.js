@@ -78,7 +78,7 @@ const Notes = () => {
                 {selectedNote ? (
                     <div>
                         <h2>{selectedNote.title}</h2>
-                        <p><b>Ημερομηνία:</b> {selectedNote.createdAt}</p>
+                         <b>Ημερομηνία:</b> {new Date(selectedNote.createdAt).toLocaleDateString('en-GB')}
                         <hr />
                         <p style={{ whiteSpace: 'pre-line' }}>{selectedNote.content}</p>
                     </div>
@@ -123,7 +123,7 @@ const Notes = () => {
                     .map((note, index) => (
                         <Card
                             key={index}
-                            title={`${note.title} | ${note.createdAt}`}
+                            title={`${note.title} | ${new Date(note.createdAt).toLocaleDateString('en-GB')}`}
                             style={{
                                 width: '25rem',
                                 border: '1px solid rgba(204, 173, 87, 0.788)',
@@ -132,7 +132,7 @@ const Notes = () => {
                                 paddingBottom: '3rem'
                             }}
                         >
-                            <p className="card-content" style={{ lineHeight: '1.5' }}>{note.content}</p>
+                            <p className="card-content" style={{ lineHeight: '1' }}>{note.content}</p>
 
                             <div style={{
                                 position: 'absolute',

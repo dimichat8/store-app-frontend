@@ -94,6 +94,12 @@ const AddNotes = () => {
         </div>
     );
 
+    const handleEnterKey = (e) => {
+        if (e.key === 'Enter') {
+            handleAddNote();
+        }
+    };
+
     return (
         <div className="calendar-container">
             <Toast ref={toast} />
@@ -113,7 +119,7 @@ const AddNotes = () => {
                 }}
                 placeholder="Τίτλος.. (μέχρι 25 χαρακτήρες)"
                 className='input-text-calendar-notes-title'
-                onKeyDown={(e) => e.key === 'Enter' && handleAddNote()} 
+                onKeyDown={handleEnterKey}
             />
 
             <InputTextarea 
@@ -122,7 +128,7 @@ const AddNotes = () => {
                 placeholder="Σημείωση.."
                 className='input-text-calendar-notes'
                 style={{ marginTop: '10px' }}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddNote()} 
+                onKeyDown={handleEnterKey}
             />
 
             <div style={{ marginTop: '10px' }}>
