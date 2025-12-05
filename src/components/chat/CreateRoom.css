@@ -53,3 +53,28 @@
 .p-dialog .p-dialog-content {
   padding: 20px 10px;
 }
+
+
+p-multiselect-panel {
+  border-color: rgba(204, 173, 87, 0.788) !important; 
+}
+
+.p-multiselect-item:hover {
+  background-color: #d4a76c !important; 
+  color: #3E2723 !important; 
+}
+
+.p-multiselect-item.p-highlight {
+  background-color: rgba(204, 173, 87, 0.8) !important;
+}
+
+.p-multiselect:not(.p-disabled):hover {
+  border-color: rgba(204, 173, 87, 0.8) !important;
+  box-shadow: 0 0 0 0.1rem rgba(204, 173, 87, 0.8) !important;
+}
+
+.p-multiselect:focus,
+.p-multiselect.p-focus {
+  border-color: rgba(204, 173, 87, 0.8) !important;
+  box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.8) !important;
+}

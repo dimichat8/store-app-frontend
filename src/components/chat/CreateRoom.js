@@ -3,11 +3,15 @@ import { Dialog } from "primereact/dialog";
 import { MultiSelect } from "primereact/multiselect";
 import ApiService from "../ApiService";
 import "./CreateRoom.css";
+import { useAuth } from '../AuthProvider';
 
 const CreateRoom = ({ visible, onHide, onRoomCreated }) => {
   const [newRoomName, setNewRoomName] = useState("");
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [users, setUsers] = useState([]);
+  const { userId } = useAuth();
+  const currentUserId = userId;
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -15,7 +19,12 @@ const CreateRoom = ({ visible, onHide, onRoomCreated }) => {
         const res = await ApiService.getAllUsers();
         if (res.status === 200 && res.data) {
           const usersArray = Array.isArray(res.data.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
-          setUsers(usersArray);
+
+          const filteredUsers = usersArray.filter(
+            (u) => u.id !== currentUserId
+          );
+
+          setUsers(filteredUsers);
         }
       } catch (err) {
         console.error("Σφάλμα κατά το fetch χρηστών:", err);

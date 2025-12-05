@@ -1,125 +1,86 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import ChatList from "./ChatList";
+import ChatWindow from "./ChatWindow";
 import CreateRoom from "./CreateRoom";
 import ApiService from "../ApiService";
-import "./ChatScreen.css";
 import { useAuth } from '../AuthProvider';
+import "./ChatScreen.css";
 
 const ChatScreen = () => {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [createDialogVisible, setCreateDialogVisible] = useState(false);
   const [newMessage, setNewMessage] = useState("");
-  const [avatars, setAvatars] = useState({}); 
-  const messagesEndRef = useRef(null);
+  const [avatars, setAvatars] = useState({});
   const navigate = useNavigate();
   const { userId } = useAuth();
-  const currentUserId = userId || 1;
+  const currentUserId = userId;
 
   const fetchUserAvatar = async (id) => {
     if (!id || avatars[id]) return;
-
     try {
       const avatarUrl = await ApiService.getUserAvatar(id);
       setAvatars(prev => ({ ...prev, [id]: avatarUrl }));
-    } catch (err) {
-      console.error("Failed to load avatar for userId:", id, err);
-      setAvatars(prev => ({ ...prev, [id]: "https://i.pravatar.cc/150?img=12" }));
+    } catch {
+      setAvatars(prev => ({ ...prev, [id]: "https://static.thenounproject.com/png/5034901-512.png" }));
     }
+  };
+
+  const getChatAvatar = (chat) => {
+    const otherMemberId = chat.members?.find(m => m.id !== currentUserId)?.id;
+    const isGroup = chat.members?.length > 2;
+    if (isGroup) return "https://static.thenounproject.com/png/team-icon-6282673-512.png";
+    return avatars[otherMemberId] || "https://i.ibb.co/4fQbM0f/unknown-person.png";
   };
 
   useEffect(() => {
     if (!userId) return;
-
     const fetchUserRooms = async () => {
       try {
         const res = await ApiService.getUserRooms(userId);
         if (res.status === 200 && Array.isArray(res.data.data)) {
           const rooms = res.data.data.map(chat => ({
             ...chat,
-            members: (chat.memberIds || []).map(id => ({ id }))
+            members: (chat.memberIds || []).map(id => ({ id })),
+            avatar: undefined
           }));
           setChats(rooms);
-
           rooms.forEach(chat => chat.members.forEach(member => fetchUserAvatar(member.id)));
         }
       } catch (err) {
         console.error("Error fetching user rooms:", err);
       }
     };
-
     fetchUserRooms();
   }, [userId]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [selectedChat]);
 
   const handleSelectChat = async (chat) => {
     if (!chat) return;
     try {
       const res = await ApiService.getMessages(chat.id);
-      const messagesData = res.status === 200 ? res.data.data : [];
-      const messages = Array.isArray(messagesData) ? messagesData : [];
-
+      const messages = Array.isArray(res.data.data) ? res.data.data : [];
       const formattedMessages = messages.map(msg => ({
         id: msg.id,
         senderId: msg.senderId,
         sender: msg.senderId === currentUserId ? "Εσύ" : msg.senderUsername,
         text: msg.content
       }));
-
-      setSelectedChat({ ...chat, messages: formattedMessages });
-    } catch (err) {
-      console.error("Error fetching messages for chat:", chat.id, err);
-      setSelectedChat(chat);
+      setSelectedChat({ ...chat, messages: formattedMessages, avatar: getChatAvatar(chat) });
+    } catch {
+      setSelectedChat({ ...chat, avatar: getChatAvatar(chat) });
     }
-  };
-
-  const handleRoomCreated = (newRoom) => {
-    if (!newRoom) return;
-
-    const tempRoom = {
-      id: newRoom?.id || `temp-${Date.now()}`,
-      name: newRoom?.name || "Νέα Συνομιλία",
-      members: newRoom?.members || [],
-      lastMessage: "",
-      time: "",
-      messages: []
-    };
-    setChats(prev => [...prev, tempRoom]);
-    setSelectedChat(tempRoom);
-
-    tempRoom.members.forEach(member => fetchUserAvatar(member.id));
   };
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedChat) return;
-
-    const messagePayload = {
-      senderId: currentUserId,
-      senderUsername: "Εσύ",
-      content: newMessage,
-    };
-
+    const messagePayload = { senderId: currentUserId, senderUsername: "Εσύ", content: newMessage };
     try {
       const res = await ApiService.sendMessage(selectedChat.id, messagePayload);
       if (res.status === 200) {
-        const newMsg = {
-          id: res.data?.data?.id || Date.now(),
-          sender: "Εσύ",
-          senderId: currentUserId,
-          text: newMessage
-        };
-        setSelectedChat(prev => ({
-          ...prev,
-          messages: [...(prev.messages || []), newMsg],
-          lastMessage: newMessage,
-          time: "Τώρα"
-        }));
-        setChats(prev => prev.map(c => c.id === selectedChat.id
-          ? { ...c, lastMessage: newMessage, time: "Τώρα" }
-          : c));
+        const newMsg = { id: res.data?.data?.id || Date.now(), sender: "Εσύ", senderId: currentUserId, text: newMessage };
+        setSelectedChat(prev => ({ ...prev, messages: [...(prev.messages || []), newMsg], lastMessage: newMessage, time: "Τώρα" }));
+        setChats(prev => prev.map(c => c.id === selectedChat.id ? { ...c, lastMessage: newMessage, time: "Τώρα" } : c));
         setNewMessage("");
       }
     } catch (err) {
@@ -127,44 +88,33 @@ const ChatScreen = () => {
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") handleSendMessage();
+  const handleRoomCreated = (newRoom) => {
+    if (!newRoom) return;
+    const tempRoom = {
+      id: newRoom?.id || `temp-${Date.now()}`,
+      name: newRoom?.name || "Νέα Συνομιλία",
+      members: newRoom?.members || [],
+      lastMessage: "",
+      time: "",
+      messages: [],
+      avatar: undefined
+    };
+    setChats(prev => [...prev, tempRoom]);
+    setSelectedChat(tempRoom);
+    tempRoom.members.forEach(member => fetchUserAvatar(member.id));
   };
 
   return (
     <div className="chat-screen">
       <div className="chat-sidebar">
         <h2 className="chatlist-title">Συνομιλίες</h2>
-        <div className="chatlist-items">
-          {chats.map(chat => {
-            const otherMemberId = chat.members?.find(m => m.id !== currentUserId)?.id;
-            const isGroup = chat.members?.length > 2;
-            return (
-              <div
-                key={chat.id}
-                className={`chat-item ${selectedChat?.id === chat.id ? "active-chat" : ""}`}
-                onClick={() => handleSelectChat(chat)}
-              >
-                <img 
-                  src={
-                    isGroup 
-                      ? "https://static.thenounproject.com/png/team-icon-6282673-512.png"   
-                      : avatars[otherMemberId] || "https://i.pravatar.cc/150?img=12"
-                  } 
-                  alt={chat.name || "Avatar"} 
-                  className="chat-avatar" 
-                />
-                <div className="chat-info">
-                  <div className="chat-top-row">
-                    <span className="chat-name">{chat.name}</span>
-                    <span className="chat-time">{chat.time || ""}</span>
-                  </div>
-                  <p className="chat-last-message">{chat.lastMessage || ""}</p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <ChatList 
+          chats={chats} 
+          selectedChat={selectedChat} 
+          onSelectChat={handleSelectChat} 
+          getChatAvatar={getChatAvatar} 
+          currentUserId={currentUserId} 
+        />
 
         <div className="chat-sidebar-buttons">
           <button onClick={() => setCreateDialogVisible(true)}>➕ Νέα Συνομιλία</button>
@@ -174,47 +124,13 @@ const ChatScreen = () => {
       </div>
 
       <div className="chat-main">
-        {selectedChat ? (
-          <>
-            <div className="chat-header">
-              <img 
-                src={avatars[selectedChat.members?.find(m => m.id !== currentUserId)?.id] || "https://i.pravatar.cc/150?img=12"} 
-                alt={selectedChat.name || "Avatar"} 
-                className="chat-avatar-header" 
-              />
-              <span className="chat-header-name">{selectedChat.name}</span>
-            </div>
-
-            <div className="messages-container">
-              {(selectedChat.messages || []).map((msg, index) => (
-                <div
-                  key={msg.id ? `msg-${msg.id}` : `msg-${index}-${msg.text}` }
-                  className={`message-wrapper ${msg.senderId === currentUserId ? "sent-wrapper" : "received-wrapper"}`}
-                >
-                  <div className="sender-name">{msg.sender}</div>
-                  <div className={`message-item ${msg.senderId === currentUserId ? "sent" : "received"}`}>
-                    <div className="message-bubble">{msg.text}</div>
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-
-            <div className="chat-input-container">
-              <input
-                type="text"
-                placeholder="Γράψε μήνυμα..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={handleKeyPress}
-                className="chat-input"
-              />
-              <button onClick={handleSendMessage} className="chat-send-btn">📤</button>
-            </div>
-          </>
-        ) : (
-          <div className="no-chat-selected">Επέλεξε μια συνομιλία για να ξεκινήσεις</div>
-        )}
+        <ChatWindow
+          selectedChat={selectedChat}
+          currentUserId={currentUserId}
+          newMessage={newMessage}
+          setNewMessage={setNewMessage}
+          handleSendMessage={handleSendMessage}
+        />
       </div>
 
       <CreateRoom
