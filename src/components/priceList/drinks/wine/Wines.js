@@ -2,7 +2,7 @@ import CategoryPriceList from '../../CategoryPriceList';
 
  const Wines = () => (
     <CategoryPriceList
-        category="Μπύρα"
+        category="Κρασιά"
         searchPlaceholder="Αναζήτηση για κρασιά"
         headers={['Όνομα Προϊόντος', 'Τιμή Προϊόντος']}
         fields={['productName', 'priceValue']}

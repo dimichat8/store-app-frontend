@@ -3,7 +3,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from 'primereact/dropdown';
-import './AddItem.css';
+import './AddUppdate.css';
 import { Calendar } from "primereact/calendar";
 import { Toast } from "primereact/toast";
 
