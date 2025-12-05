@@ -1,0 +1,58 @@
+.break-word {
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.selected-row {
+  background-color: rgba(204, 173, 87, 0.788) !important; 
+  color: white;
+}
+
+.p-checkbox.p-component.p-highlight .p-checkbox-box {
+  background-color: rgba(204, 173, 87, 0.788) !important;
+  border-color: rgba(204, 173, 87, 0.788) !important;
+}
+
+.p-checkbox.p-component.p-highlight .p-checkbox-icon {
+  color: white !important;
+}
+
+.p-checkbox.p-component:hover .p-checkbox-box {
+  border-color: rgba(204, 173, 87, 0.788) !important;
+}
+
+.schedule-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin: 20px auto;
+  max-width: 1000px;
+}
+
+.schedule-input-search {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 15px;
+}
+
+.schedule-item-button .p-button-danger {
+  background-color: rgba(172, 144, 69, 0.788) !important;
+  border-color: rgba(172, 144, 69, 0.788) !important;
+}
+
+.schedule-item-button .p-button-danger:hover {
+  background-color: #8B4513 !important;
+  border-color: #8B4513 !important;
+}
+
+.schedule-group-button .p-button-danger {
+  background-color: rgba(204, 173, 87, 0.788) !important;
+  border-color: rgba(204, 173, 87, 0.788) !important;
+}
+
+.schedule-group-button .p-button-danger:hover {
+  background-color: #a89055 !important;
+  border-color: #a89055 !important;
+}

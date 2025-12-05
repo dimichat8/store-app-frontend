@@ -73,3 +73,29 @@
 .p-dropdown-items .p-dropdown-item.p-highlight {
     background-color: rgba(204, 173, 87, 0.5) !important;
 }
+
+.p-calendar .p-inputtext {
+    border-radius: 10px !important;
+    padding: 0.5em 1em !important;
+    min-width: 200px !important;
+    min-height: 30px !important;
+    width: 100% !important;
+    box-shadow: 0 0 0 0.5px rgba(204, 173, 87, 0.788) !important;
+    border: 1px solid rgba(204, 173, 87, 0.788) !important;
+    background-color: #f3ecdc !important; 
+    color: black !important;
+    transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+/* hover και focus effect */
+.p-calendar .p-inputtext:hover,
+.p-calendar .p-inputtext:focus {
+    border-color: rgba(153, 101, 21, 0.9) !important;
+    box-shadow: 0 0 0 0.2rem rgba(204, 173, 87, 0.4) !important;
+}
+
+/* Στυλ για το wrapper ώστε να μην αλλάξει layout */
+.p-calendar {
+    width: 35% !important;
+    margin: 20px !important;
+}
