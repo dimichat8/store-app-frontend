@@ -67,7 +67,7 @@ const AddOrders = () => {
         orderName: order.orderName,
         description: order.description,
         quantity: parseInt(order.quantity, 10),
-        createdAt: `${order.createdAt.getFullYear()}-${pad(order.createdAt.getMonth() + 1)}-${pad(order.createdAt.getDate())}` // YYYY-MM-DD
+        createdAt: `${order.createdAt.getFullYear()}-${pad(order.createdAt.getMonth() + 1)}-${pad(order.createdAt.getDate())}`
     }));
 
     try {

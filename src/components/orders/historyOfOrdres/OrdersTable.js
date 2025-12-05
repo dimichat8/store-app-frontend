@@ -7,13 +7,18 @@ import { ConfirmDialog } from 'primereact/confirmdialog';
 import ApiService from '../../ApiService';
 import ItemRow from './OrderItemRow';
 import GroupRow from './OrderGroupRow';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
 import './HistoryOfOrders.css';
+import { Calendar } from 'primereact/calendar';
 
 function OrdersTable() {
     const [groups, setGroups] = useState([]);
     const [expandedRows, setExpandedRows] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedOrders, setSelectedOrders] = useState([]); 
+    const [editOrder, setEditOrder] = useState(null);
+    const [isEditOrderDialogVisible, setIsEditOrderDialogVisible] = useState(false);
     const toast = useRef(null);
 
     const fetchGroupedOrders = async () => {
@@ -89,11 +94,23 @@ function OrdersTable() {
                     <Column field="orderName" header="Ονομα Προϊόντος" style={{ width: '30%' }} />
                     <Column field="description" header="Περιγραφή" style={{ width: '40%' }} />
                     <Column field="quantity" header="Ποσότητα" style={{ width: '15%' }} />
-                    <Column field="createdAt" header="Ημερομηνία" style={{ width: '15%' }} />
+                    <Column field="createdAt" header="Ημερομηνία" style={{ width: '15%' }}
+                            body={(rowData) => {
+                            const date = new Date(rowData.createdAt);
+                            return date.toLocaleDateString('en-GB');
+                        }} 
+                    />
                     <Column
-                        body={(order) => <ItemRow item={order} onDelete={handleDeleteOrder} />}
-                        header="Διαγραφή"
-                        style={{ width: '10%' }}
+                    
+                        body={(order) => <ItemRow 
+                            item={order} 
+                            onEdit={(item) => {
+                                setEditOrder({...item,createdAt: item.createdAt ? new Date(item.createdAt) : null });                 
+                                setIsEditOrderDialogVisible(true);   
+                            }}
+                            onDelete={handleDeleteOrder} />}
+                            header="Διαγραφή"
+                            style={{ width: '10%' }}
                     />
                 </DataTable>
             </div>
@@ -104,6 +121,65 @@ function OrdersTable() {
         <div className="card">
             <Toast ref={toast} />
             <ConfirmDialog />
+
+            <Dialog
+                header="Ενημέρωση Παραγγελίας"
+                visible={isEditOrderDialogVisible}
+                style={{ width: '400px' }}
+                onHide={() => setIsEditOrderDialogVisible(false)}
+                className="add-item-dialog"
+            >
+                <label className="center-label">Όνομα Προϊόντος</label>
+                <div className="input-field-wrapper">
+                    <InputText
+                        value={editOrder?.orderName || ''}
+                        onChange={(e) => setEditOrder({ ...editOrder, orderName: e.target.value })}
+                        placeholder="Όνομα προϊόντος"
+                        style={{ width: '100%', marginBottom: '10px' }}
+                    />
+                </div>
+                <label className="center-label">Περιγραφή</label>
+                <div className="input-field-wrapper">
+                    <InputText
+                        value={editOrder?.description || ''}
+                        onChange={(e) => setEditOrder({ ...editOrder, description: e.target.value })}
+                        placeholder="Περιγραφή"
+                        style={{ width: '100%', marginBottom: '10px' }}
+                    />
+                </div>
+                <label className="center-label">Ποσότητα</label>
+                <div className="input-field-wrapper">
+                    <InputText
+                        value={editOrder?.quantity || ''}
+                        onChange={(e) => setEditOrder({ ...editOrder, description: e.target.value })}
+                        placeholder="Περιγραφή"
+                        style={{ width: '100%', marginBottom: '10px' }}
+                    />
+                </div>
+                <label className="center-label">Ημερομηνία</label>
+                <div className="input-field-wrapper">
+                    <Calendar
+                        value={editOrder?.createdAt || null}
+                        onChange={(e) => setEditOrder({ ...editOrder, createdAt: e.value })}
+                        selectionMode="single"
+                        placeholder="(dd/mm/yy)"
+                        dateFormat="dd/mm/yy"
+                        showIcon
+                        className="custom-calendar"
+                    />
+                </div>
+                <Button
+                    label="Αποθήκευση"
+                    onClick={async () => {
+                        await ApiService.updateOrder(editOrder); 
+                        setIsEditOrderDialogVisible(false);
+                        fetchGroupedOrders();
+                        toast.current.show({ severity: 'success', summary: 'Επιτυχία', detail: 'Η παραγγελία ενημερώθηκε.', life: 3000 });
+                    }}
+                    className="save-button-pricelist"
+                />
+            </Dialog>
+            
             <div style={{ marginTop: '20px', padding: '20px', margin: 'auto' }}>
                 <InputText
                     placeholder="Αναζήτηση..."
@@ -124,8 +200,18 @@ function OrdersTable() {
                     tableStyle={{ minWidth: '50rem' }}
                 >
                     <Column expander style={{ width: '3rem' }} />
-                    <Column field="from" header="Ημερομηνία Από" style={{ width: '25%' }} />
-                    <Column field="to" header="Ημερομηνία Έως" style={{ width: '25%' }} />
+                    <Column field="from" header="Ημερομηνία Από" style={{ width: '25%' }} 
+                            body={(rowData) => {
+                            const date = new Date(rowData.from);
+                            return date.toLocaleDateString('en-GB');
+                        }} 
+                    />
+                    <Column field="to" header="Ημερομηνία Έως" style={{ width: '25%' }} 
+                            body={(rowData) => {
+                            const date = new Date(rowData.from);
+                            return date.toLocaleDateString('en-GB');
+                        }} 
+                    />
                     <Column field="orders.length" header="Αριθμός Παραγγελιών" style={{ width: '25%' }} />
                     <Column
                         body={(group) => <GroupRow group={group} onDelete={handleDeleteGroup} />}

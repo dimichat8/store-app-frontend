@@ -2,7 +2,12 @@ import React from 'react';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 
-function ItemRow({ item, onDelete }) {
+function ItemRow({ item, onEdit, onDelete }) {
+
+    const handleEdit = () => {
+        onEdit(item);
+    };
+
     const handleDeleteConfirm = () => {
         confirmDialog({
             message: 'Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την παραγγελία;',
@@ -18,12 +23,22 @@ function ItemRow({ item, onDelete }) {
     };
 
     return (
-        <Button
-            icon="pi pi-trash"
-            className="p-button-danger"
-            onClick={handleDeleteConfirm}
-            rounded
-        />
+        <div style={{ display: "flex", alignItems: "center" }}>
+            <Button
+                    icon="pi pi-pencil"
+                    severity="secondary"
+                    onClick={() => handleEdit()}
+                    aria-label="Edit"
+                    rounded
+                    style={{ marginRight: '10px' }}
+                    />
+            <Button
+                icon="pi pi-trash"
+                className="p-button-danger"
+                onClick={handleDeleteConfirm}
+                rounded
+            />
+        </div>
     );
 }
 
