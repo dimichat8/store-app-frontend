@@ -6,10 +6,10 @@ const PrivateRoute = () => {
   const { accessToken, isAuthInitialized } = useAuth();
 
   if (!isAuthInitialized) {
-    return null; 
+    return <div>Loading...</div>; 
   }
 
-  return accessToken ? <Outlet /> : <Navigate to="/" replace />;
+  return accessToken ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;

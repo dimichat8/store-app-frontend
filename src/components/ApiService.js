@@ -31,17 +31,25 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        const refreshResponse = await api.post("/api/auth/refresh", {}, { withCredentials: true });
-        if (refreshResponse.data?.data) {
-          setAccessToken(refreshResponse.data.data);
-          originalRequest.headers["Authorization"] = `Bearer ${refreshResponse.data.data}`;
-          return api(originalRequest);
+    if (!originalRequest._retry && error.response) {
+      const status = error.response.status;
+
+      if (status === 401) {
+        originalRequest._retry = true;
+        try {
+          const refreshResponse = await api.post("/api/auth/refresh", {}, { withCredentials: true });
+          if (refreshResponse.data?.data) {
+            const newToken = refreshResponse.data.data.accessToken || refreshResponse.data.data;
+            setAccessToken(newToken);
+            originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+            return api(originalRequest); 
+          } else {
+            window.location.href = "/";
+          }
+        } catch (err) {
+          console.warn("Refresh token failed:", err);
+          window.location.href = "/";
         }
-      } catch {
-        window.location.href = "/";
       }
     }
 
@@ -76,27 +84,23 @@ const ApiService = {
 
   getUserById: (userId) => api.get(`/api/users/${userId}`),
 
-  // getUserAvatar: (userId) => api.get(`/api/users/${userId}/avatar`),
-
   getUserAvatar: async (userId) => {
     try {
       const response = await api.get(`/api/users/${userId}/avatar`, {
         responseType: "blob",
-        validateStatus: (status) => status < 500, // δέχεται 404 χωρίς exception
+        validateStatus: (status) => status < 500, 
       });
 
       if (response.status === 404 || !response.data) {
-        console.warn(`⚠️ No avatar found for userId ${userId}`);
-        return null; // backend δεν έχει avatar -> fallback
+        return null;
       }
 
       const blobUrl = URL.createObjectURL(response.data);
-      console.log(`✅ Avatar blob created for user ${userId}:`, blobUrl);
       return blobUrl;
 
     } catch (error) {
       console.error(`❌ Error loading avatar for userId ${userId}:`, error);
-      return null; // fallback για οποιοδήποτε άλλο error
+      return null; 
     }
   },
 
@@ -112,9 +116,8 @@ const ApiService = {
   // ----------- PRODUCT -----------
   addProduct: (product) => api.post("/api/product/add", product),
 
-  addProductPrice: (productWithPrice) =>
-    api.post("/api/product/add/product/price", productWithPrice),
-
+  addProductPrice: (productWithPrice) => api.post("/api/product/add/product/price", productWithPrice),
+  updateProductWithPrice: (productWithPriceDTO) => api.put(`/api/product/update/product/price`, productWithPriceDTO),
   deleteProduct: (productId) => api.delete(`/api/product/delete/${productId}`),
 
   // ----------- NOTES -----------
