@@ -4,10 +4,6 @@ import { confirmDialog } from 'primereact/confirmdialog';
 
 function ItemRow({ item, onEdit, onDelete }) {
 
-    const handleEdit = () => {
-        onEdit(item);
-    };
-
     const handleDeleteConfirm = () => {
         confirmDialog({
             message: 'Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την παραγγελία;',
@@ -27,11 +23,11 @@ function ItemRow({ item, onEdit, onDelete }) {
             <Button
                     icon="pi pi-pencil"
                     severity="secondary"
-                    onClick={() => handleEdit()}
+                    onClick={() => onEdit(item)}
                     aria-label="Edit"
                     rounded
                     style={{ marginRight: '10px' }}
-                    />
+            />
             <Button
                 icon="pi pi-trash"
                 className="p-button-danger"

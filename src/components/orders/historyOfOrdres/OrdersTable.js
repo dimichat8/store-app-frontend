@@ -21,6 +21,21 @@ function OrdersTable() {
     const [isEditOrderDialogVisible, setIsEditOrderDialogVisible] = useState(false);
     const toast = useRef(null);
 
+    const stringToLocalDate = (dateString) => {
+        if (!dateString) return null;
+            const [year, month, day] = dateString.split('-').map(Number);
+            return new Date(year, month - 1, day);
+    };
+
+    const localDateToString = (dateObj) => {
+        if (!dateObj) return null;
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+    };
+
     const fetchGroupedOrders = async () => {
         try {
             const response = await ApiService.findGroupedOrders();
@@ -34,9 +49,38 @@ function OrdersTable() {
         fetchGroupedOrders();
     }, []);
 
+    const handleEditOrder = async () => {
+        try {
+            const payload = {
+                ...editOrder,
+                createdAt: localDateToString(editOrder.createdAt)
+            };
+            const response = await ApiService.updateOrder(payload);
+            setIsEditOrderDialogVisible(false);
+            fetchGroupedOrders();
+            if (response.status === 200) {
+            toast.current.show({
+                severity: 'success',
+                summary: 'Επιτυχία',
+                detail: 'Η παραγγελία ενημερώθηκε.',
+                life: 3000
+            });
+        }
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Σφάλμα',
+                detail: 'Αποτυχία ενημέρωσης παραγγελίας.',
+                life: 3000
+            });
+        }
+    };
+
     const handleDeleteOrder = async (orderId) => {
         try {
-            await ApiService.deleteOrder(orderId);
+            const response = await ApiService.updateOrder(editOrder);
+            console.log(response.data);
             const newGroups = groups.map(group => ({
                 ...group,
                 orders: group.orders.filter(o => o.id !== orderId)
@@ -101,12 +145,14 @@ function OrdersTable() {
                         }} 
                     />
                     <Column
-                    
                         body={(order) => <ItemRow 
                             item={order} 
                             onEdit={(item) => {
-                                setEditOrder({...item,createdAt: item.createdAt ? new Date(item.createdAt) : null });                 
-                                setIsEditOrderDialogVisible(true);   
+                                setEditOrder({
+                                    ...item,
+                                    createdAt: stringToLocalDate(item.createdAt)
+                                });
+                                setIsEditOrderDialogVisible(true);
                             }}
                             onDelete={handleDeleteOrder} />}
                             header="Διαγραφή"
@@ -151,7 +197,7 @@ function OrdersTable() {
                 <div className="input-field-wrapper">
                     <InputText
                         value={editOrder?.quantity || ''}
-                        onChange={(e) => setEditOrder({ ...editOrder, description: e.target.value })}
+                        onChange={(e) => setEditOrder({ ...editOrder, quantity: e.target.value })}
                         placeholder="Περιγραφή"
                         style={{ width: '100%', marginBottom: '10px' }}
                     />
@@ -170,12 +216,7 @@ function OrdersTable() {
                 </div>
                 <Button
                     label="Αποθήκευση"
-                    onClick={async () => {
-                        await ApiService.updateOrder(editOrder); 
-                        setIsEditOrderDialogVisible(false);
-                        fetchGroupedOrders();
-                        toast.current.show({ severity: 'success', summary: 'Επιτυχία', detail: 'Η παραγγελία ενημερώθηκε.', life: 3000 });
-                    }}
+                    onClick={handleEditOrder}
                     className="save-button-pricelist"
                 />
             </Dialog>
@@ -208,7 +249,7 @@ function OrdersTable() {
                     />
                     <Column field="to" header="Ημερομηνία Έως" style={{ width: '25%' }} 
                             body={(rowData) => {
-                            const date = new Date(rowData.from);
+                            const date = new Date(rowData.to);
                             return date.toLocaleDateString('en-GB');
                         }} 
                     />
