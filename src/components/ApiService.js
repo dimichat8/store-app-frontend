@@ -132,20 +132,21 @@ const ApiService = {
 
   findAllNotes: () => api.get("/api/note/find/all"),
   addNotes: (notesList) => api.post("/api/note/add", notesList),
-
-  findNotificationsByDates: (createdAt) =>
-    api.get("/api/note/find/byDates", { params: { createdAt } }),
+  findNotificationsByDates: (createdAt) => api.get("/api/note/find/byDates", { params: { createdAt } }),
+  updateNote: (note) => api.put(`/api/note/update/${note.id}`, note),
   deleteNoteById: (noteId) => api.delete(`/api/note/delete/${noteId}`),
 
   // ----------- ORDERS -----------
   findAllOrders: () => api.get("/api/orders/find/all"),
   addOrders: (orderList) => api.post("/api/orders/add", orderList),
   findGroupedOrders: () => api.get(`/api/orders/by-date`),
+  updateOrder: (order) => api.put(`/api/orders/update/${order.id}`, order),
   deleteOrder: (orderId) => api.delete(`/api/orders/delete/${orderId}`),
 
   // ----------- SCHEDULES -----------
   findAllSchedules: () => api.get("/api/schedule/find/all"),
   addSchedules: (scheduleList) => api.post("/api/schedule/add", scheduleList),
+  updateSchedule: (schedule) => api.put(`/api/schedule/update/${schedule.id}`, schedule),
   deleteSchedule: (scheduleId) => api.delete(`/api/schedule/delete/${scheduleId}`),
 
   // ----------- CHAT -----------
