@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from 'primereact/card';
 import './Notes.css'; 
 import { Calendar } from 'primereact/calendar';
@@ -7,6 +7,9 @@ import ApiService from '../ApiService';
 import { Button } from 'primereact/button';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Sidebar } from 'primereact/sidebar';
+import { Dialog } from 'primereact/dialog';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { Toast } from 'primereact/toast';
 
 const Notes = () => {
     const [notes, setNotes] = useState([]);
@@ -15,6 +18,24 @@ const Notes = () => {
     const [dateTo, setDateTo] = useState(null);
     const [visible, setVisible] = useState(false);
     const [selectedNote, setSelectedNote] = useState(null);
+    const [editNote, setEditNote] = useState(null);
+    const [isEditNoteDialogVisible, setIsEditNoteDialogVisible] = useState(false);
+    const toast = useRef(null);
+    
+    const stringToLocalDate = (dateString) => {
+        if (!dateString) return null;
+            const [year, month, day] = dateString.split('-').map(Number);
+            return new Date(year, month - 1, day);
+    };
+
+    const localDateToString = (dateObj) => {
+        if (!dateObj) return null;
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+    };
 
     const fetchAllNotes = async () => {
         try {
@@ -28,6 +49,36 @@ const Notes = () => {
     useEffect(() => {
         fetchAllNotes();
     }, []);
+
+    const handleEditNote = async () => {
+        try {
+            const payload = {
+                ...editNote,
+                createdAt: localDateToString(editNote.createdAt)
+            };
+            const response = await ApiService.updateNote(payload);
+            console.log(response.data);
+            setIsEditNoteDialogVisible(false);
+            fetchAllNotes();
+            if (response.status === 200) {
+            toast.current.show({
+                severity: 'success',
+                summary: 'Επιτυχία',
+                detail: 'Η παραγγελία ενημερώθηκε.',
+                life: 3000
+            });
+        }
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Σφάλμα',
+                detail: 'Αποτυχία ενημέρωσης παραγγελίας.',
+                life: 3000
+            });
+        }
+    };
+       
 
     const handleDeleteNote = async (noteId) => {
         try {
@@ -72,7 +123,59 @@ const Notes = () => {
 
     return (
         <div>
+            <Toast ref={toast} />
             <ConfirmDialog />
+            <Dialog
+                header="Επεξεργασία Σημείωσης"
+                visible={isEditNoteDialogVisible}
+                style={{ width: '35rem' }}
+                onHide={() => setIsEditNoteDialogVisible(false)}
+            >
+                <Calendar 
+                    value={editNote?.createdAt || null}
+                    onChange={(e) => setEditNote({ ...editNote, createdAt: e.value })} 
+                    selectionMode="single"
+                    placeholder="(dd/mm/yy)"
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className="custom-calendar"
+                />
+                <InputText 
+                    value={editNote?.title}
+                    onChange={(e) => {
+                        if (e.target.value.length <= 25) {
+                            setEditNote({ ...editNote, title: e.target.value });
+                        }
+                    }}
+                    placeholder="Τίτλος.. (μέχρι 25 χαρακτήρες)"
+                    className='input-text-calendar-notes-title'
+                    style={{ width: '100%', marginTop: '10px' }}
+                />
+
+                <InputTextarea 
+                    value={editNote?.content}
+                    onChange={(e) => setEditNote({ ...editNote, content: e.target.value })} 
+                    placeholder="Σημείωση.."
+                    className='input-text-calendar-notes'
+                    style={{ marginTop: '10px', width: '100%' }}
+                    rows={5}
+                />
+
+                <div 
+                    style={{
+                        marginTop: '20px',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '1rem'
+                    }}
+                >
+                    <Button 
+                        label="Αποθήκευση"
+                        onClick={handleEditNote}
+                        className="save-button-pricelist"
+                    />
+                </div>
+            </Dialog>
 
             <Sidebar visible={visible} position="right" onHide={() => setVisible(false)}>
                 {selectedNote ? (
@@ -148,7 +251,16 @@ const Notes = () => {
                                     tooltip="Προβολή"
                                     onClick={() => openNoteDetails(note)}
                                 />
-
+                                <Button
+                                    icon="pi pi-pencil"
+                                    severity="secondary"
+                                    tooltip="Επεξεργασία"
+                                    rounded
+                                    onClick={() => {
+                                        setEditNote({ ...note, createdAt: stringToLocalDate(note.createdAt) });         
+                                        setIsEditNoteDialogVisible(true);
+                                    }}
+                                />
                                 <Button 
                                     icon="pi pi-trash"
                                     className="p-button-danger p-button-rounded"
