@@ -98,7 +98,6 @@ const AddSchedule = () => {
             });
             return;
         }
-        const pad = (n) => n < 10 ? '0' + n : n;
 
         const payload = data.map(d => ({
             day: d.day,

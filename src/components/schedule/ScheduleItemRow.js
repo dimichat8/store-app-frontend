@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 
-function ScheduleItemRow({ item, onDelete }) {
+function ScheduleItemRow({ item, onEdit, onDelete }) {
     const handleDeleteConfirm = () => {
         confirmDialog({
             message: 'Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή τη βάρδια;',
@@ -18,12 +18,22 @@ function ScheduleItemRow({ item, onDelete }) {
     };
 
     return (
-        <Button
-            icon="pi pi-trash"
-            className="p-button-danger"
-            onClick={handleDeleteConfirm}
-            rounded
-        />
+        <div style={{ display: "flex", alignItems: "center" }}>
+            <Button
+                    icon="pi pi-pencil"
+                    severity="secondary"
+                    onClick={() => onEdit(item)}
+                    aria-label="Edit"
+                    rounded
+                    style={{ marginRight: '10px' }}
+            />
+            <Button
+                icon="pi pi-trash"
+                className="p-button-danger"
+                onClick={handleDeleteConfirm}
+                rounded
+            />
+        </div>
     );
 }
 

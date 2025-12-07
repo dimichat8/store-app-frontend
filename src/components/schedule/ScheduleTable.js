@@ -8,13 +8,45 @@ import ApiService from '../ApiService';
 import ScheduleItemRow from './ScheduleItemRow';
 import ScheduleGroupRow from './ScheduleGroupRow';
 import './ScheduleTable.css';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
 
 function ScheduleTable() {
+    const [data, setData] = useState([]);
+    const [day, setDay] = useState(null);
+    const [workers, setWorkers] = useState('');
+    const [shift, setShift] = useState('');
+    const [hours, setHours] = useState('');
     const [groups, setGroups] = useState([]);
     const [expandedRows, setExpandedRows] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [editSchedule, setEditSchedule] = useState(null);
+    const [isEditScheduleDialogVisible, setIsEditScheduleDialogVisible] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
     const toast = useRef(null);
+
+    const days = [
+        { label: 'Δευτέρα', value: 'Δευτέρα' },
+        { label: 'Τρίτη', value: 'Τρίτη' },
+        { label: 'Τετάρτη', value: 'Τετάρτη' },
+        { label: 'Πέμπτη', value: 'Πέμπτη' },
+        { label: 'Παρασκευή', value: 'Παρασκευή' },
+        { label: 'Σαββάτο', value: 'Σαββάτο' },
+        { label: 'Κυριακή', value: 'Κυριακή' },
+    ];
+
+    const shifts = [
+        { label: 'Πρωί', value: 'Πρωί' },
+        { label: 'Βράδυ', value: 'Βράδυ' },
+    ];
+
+    const resetForm = () => {
+        setDay(null);
+        setWorkers('');
+        setShift(null);
+        setHours('');
+    };
 
     const fetchGroups = async () => {
         try {
@@ -42,6 +74,58 @@ function ScheduleTable() {
     useEffect(() => {
         fetchGroups();
     }, []);
+
+    const handleEditSchedule = async () => {
+        let newErrors = [];
+
+        if (!editSchedule?.day) newErrors.push("Ημέρα");
+        if (!editSchedule?.workers) newErrors.push("Εργαζόμενοι");
+        if (!editSchedule?.shift) newErrors.push("Βάρδια");
+        if (!editSchedule?.hours) newErrors.push("Ώρες"); 
+        
+        if (newErrors.length > 0) {
+            toast.current.show({
+                severity: 'warn',
+                content: (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ color: '#f1c40f', fontSize: '1.5rem' }}>⚠️</span> 
+                    <div>
+                        <strong>Προσοχή</strong>
+                        <div>Συμπληρώστε τα υποχρεωτικά πεδία: <b>{newErrors.join(", ")}</b></div>
+                    </div>
+                </div>
+                ),
+                life: 3000
+            });
+            return;
+        }
+
+        try {
+            const response = await ApiService.updateSchedule(editSchedule);
+            setIsEditScheduleDialogVisible(false);
+            fetchGroups();
+            if (response.status === 200) {
+                toast.current.show({
+                    severity: 'success',
+                    summary: 'Επιτυχία',
+                    detail: 'Η παραγγελία ενημερώθηκε.',
+                    life: 3000
+                });
+
+                const newSchedule = { day, workers, shift, hours };
+                    setData([...data, newSchedule]);
+                    resetForm();
+            }
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Σφάλμα',
+                detail: 'Αποτυχία ενημέρωσης παραγγελίας.',
+                life: 3000
+            });
+        }
+    };
 
     const handleDeleteItem = async (itemId) => {
         try {
@@ -104,8 +188,17 @@ function ScheduleTable() {
                     <Column field="shift" header="Βάρδια" style={{ width: '30%' }} />
                     <Column field="hours" header="Ώρες" style={{ width: '20%' }} />
                     <Column
-                        body={(item) => <ScheduleItemRow item={item} onDelete={handleDeleteItem} />}
-                        header="Διαγραφή"
+                        body={(schedule) => <ScheduleItemRow 
+                            item={schedule}
+                            onEdit={(item) => {
+                                setEditSchedule({
+                                    ...item
+                                });
+                                setIsEditScheduleDialogVisible(true);
+                            }}
+                            onDelete={handleDeleteItem} 
+                            />}
+                        header="Διαγραφή Group"
                         style={{ width: '10%' }}
                     />
                 </DataTable>
@@ -117,6 +210,69 @@ function ScheduleTable() {
         <div className="card">
             <Toast ref={toast} />
             <ConfirmDialog />
+
+            <Dialog
+                header="Ενημέρωση Παραγγελίας"
+                visible={isEditScheduleDialogVisible}
+                style={{ width: '400px' }}
+                onHide={() => setIsEditScheduleDialogVisible(false)}
+                className="add-item-dialog"
+            >
+                <label className="center-label">Ημέρα</label>
+                <div className="input-field-wrapper">
+                    <Dropdown
+                        placeholder="Ημέρα"
+                        value={editSchedule?.day || null}
+                        options={days}
+                        onChange={(e) =>
+                            setEditSchedule({
+                                ...editSchedule,
+                                day: e.value
+                            })
+                        }
+                        className="input-text-schedule"
+                    />
+                </div>
+                <label className="center-label">Εργαζόμενος</label>
+                <div className="input-field-wrapper">
+                    <InputText
+                        value={editSchedule?.workers || ''}
+                        onChange={(e) => setEditSchedule({ ...editSchedule, workers: e.target.value })}
+                        placeholder="Εργαζόμενος"
+                        style={{ width: '100%', marginBottom: '10px' }}
+                    />
+                </div>
+                <label className="center-label">Βάρδια</label>
+                <div className="input-field-wrapper">
+                    <Dropdown
+                        placeholder="Ημέρα"
+                        value={editSchedule?.shift || null}
+                        options={shifts}
+                        onChange={(e) =>
+                            setEditSchedule({
+                                ...editSchedule,
+                                shift: e.value
+                            })
+                        }
+                        className="input-text-schedule"
+                    />
+                </div>
+                <label className="center-label">Ώρες</label>
+                <div className="input-field-wrapper">
+                    <InputText
+                        value={editSchedule?.hours || ''}
+                        onChange={(e) => setEditSchedule({ ...editSchedule, hours: e.target.value })}
+                        placeholder="Ώρες"
+                        style={{ width: '100%', marginBottom: '10px' }}
+                    />
+                </div>
+                <Button
+                    label="Αποθήκευση"
+                    onClick={handleEditSchedule}
+                    className="save-button-pricelist"
+                />
+            </Dialog>
+
             <div style={{ marginTop: '20px', padding: '20px', margin: 'auto' }}>
                 <InputText
                     placeholder="Αναζήτηση..."
