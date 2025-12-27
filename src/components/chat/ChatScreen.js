@@ -117,9 +117,9 @@ const ChatScreen = () => {
         />
 
         <div className="chat-sidebar-buttons">
-          <button onClick={() => setCreateDialogVisible(true)}>➕ Νέα Συνομιλία</button>
-          <button onClick={() => navigate("/home")}>🏠 Αρχική</button>
-          <button onClick={() => navigate(-1)}>⬅️ Πίσω</button>
+          <button onClick={() => setCreateDialogVisible(true)}> Νέα Συνομιλία</button>
+          <button onClick={() => navigate("/home")}>🛖 Αρχική</button>
+          <button onClick={() => navigate(-1)}>👈🏾 Πίσω</button>
         </div>
       </div>
 

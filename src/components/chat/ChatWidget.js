@@ -126,8 +126,7 @@ const ChatWidget = () => {
         style={{ width: "420px", height: "520px" }}
         header={
           <div className="flex justify-between items-center w-full">
-            <span>💬 Συνομιλίες</span>
-            {selectedChat && <button className="close-room-btn" onClick={() => setSelectedChat(null)}>⬅️ Πίσω</button>}
+            {selectedChat && <button className="close-room-btn" onClick={() => setSelectedChat(null)}>👈🏾 Πίσω</button>}
           </div>
         }
       >

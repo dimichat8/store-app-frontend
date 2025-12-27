@@ -161,14 +161,14 @@ const NavBar = ( ) => {
         },
         {
              template: () => (
-        <Link
-            to="/chat/show/all/conversation"
-            className="p-menuitem-link nav-link"
-            onClick={(e) => {
-                e.preventDefault();
-                window.location.href = "/chat/show/all/conversation";
-            }}
-        >
+                                <Link
+                                    to="/chat/show/all/conversation"
+                                    className="p-menuitem-link nav-link"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        window.location.href = "/chat/show/all/conversation";
+                                    }}
+                                >
             <FontAwesomeIcon icon={faCommentDots} style={{ marginRight: '0.5em' }} />
             Συνομιλίες
         </Link>
