@@ -164,15 +164,31 @@ const NavBar = ( ) => {
                                 <Link
                                     to="/chat/show/all/conversation"
                                     className="p-menuitem-link nav-link"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        window.location.href = "/chat/show/all/conversation";
-                                    }}
                                 >
-            <FontAwesomeIcon icon={faCommentDots} style={{ marginRight: '0.5em' }} />
-            Συνομιλίες
-        </Link>
-    )
+                                    <FontAwesomeIcon icon={faCommentDots} style={{ marginRight: '0.5em' }} />
+                                    Συνομιλίες
+                                </Link>
+            )
+        },
+        {
+            template: () => 
+                                <Link
+                                    to="/chat"
+                                    className="p-menuitem-link nav-link"
+                                >
+                                    <FontAwesomeIcon icon={faCommentDots} style={{ marginRight: '0.5em' }} />
+                                    Συν
+                                </Link>
+        },
+        {
+            template: () => 
+                                <Link
+                                    to="/pos"
+                                    className="p-menuitem-link nav-link"
+                                >
+                                    <FontAwesomeIcon icon={faEuroSign} style={{ marginRight: '0.5em' }} />
+                                    Σκανάρισμα
+                                </Link>
         }
     ];
 

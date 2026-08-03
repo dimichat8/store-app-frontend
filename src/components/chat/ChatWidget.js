@@ -39,21 +39,35 @@ const ChatWidget = () => {
 
   useEffect(() => {
     if (!userId) return;
+
     const fetchUserRooms = async () => {
       try {
         const res = await ApiService.getUserRooms(userId);
         if (res.status === 200 && Array.isArray(res.data.data)) {
-          const rooms = res.data.data.map(chat => ({
-            ...chat,
-            members: (chat.memberIds || []).map(id => ({ id })),
-          }));
+
+          const rooms = res.data.data.map(chat => {
+            const isLastFromOther =
+              chat.lastMessageSenderId &&
+              chat.lastMessageSenderId !== currentUserId;
+
+            return {
+              ...chat,
+              members: (chat.memberIds || []).map(id => ({ id })),
+              lastMessage: isLastFromOther ? chat.lastMessage : "",
+              time: isLastFromOther ? chat.lastMessageTime : ""
+            };
+          });
+
           setChats(rooms);
-          rooms.forEach(chat => chat.members.forEach(member => fetchUserAvatar(member.id)));
+          rooms.forEach(chat =>
+            chat.members.forEach(member => fetchUserAvatar(member.id))
+          );
         }
       } catch (err) {
         console.error("Error fetching rooms:", err);
       }
     };
+
     fetchUserRooms();
   }, [userId]);
 
@@ -85,8 +99,7 @@ const ChatWidget = () => {
       const res = await ApiService.sendMessage(selectedChat.id, payload);
       if (res.status === 200) {
         const newMsg = { id: res.data?.data?.id || Date.now(), sender: "Εσύ", senderId: currentUserId, text: newMessage };
-        setSelectedChat(prev => ({ ...prev, messages: [...(prev.messages || []), newMsg], lastMessage: newMessage, time: "Τώρα" }));
-        setChats(prev => prev.map(c => c.id === selectedChat.id ? { ...c, lastMessage: newMessage, time: "Τώρα" } : c));
+        setSelectedChat(prev => ({ ...prev, messages: [...(prev.messages || []), newMsg]}));
         setNewMessage("");
       }
     } catch (err) {
@@ -162,192 +175,3 @@ const ChatWidget = () => {
 };
 
 export default ChatWidget;
-
-
-
-// import React, { useState, useEffect } from "react";
-// import { Dialog } from "primereact/dialog";
-// import { MessageCircle } from "lucide-react";
-// import ChatList from "./ChatList";
-// import ChatWindow from "./ChatWindow";
-// import { useAuth } from "../AuthProvider";
-// import { useLocation } from "react-router-dom";
-// import "./ChatWidget.css";
-// import {
-//   connectChatSocket,
-//   disconnectChatSocket,
-//   sendPrivateMessage,
-//   sendGroupMessage,
-// } from "../chat/websocket/ChatSocket";
-
-// const ChatWidget = () => {
-//   const [visible, setVisible] = useState(false);
-//   const [chats, setChats] = useState([]);
-//   const [selectedChat, setSelectedChat] = useState(null);
-//   const [newMessage, setNewMessage] = useState("");
-//   const { userId, accessToken, username } = useAuth();
-//   const token = accessToken;
-//   const currentUserId = userId;
-//   const location = useLocation();
-
-//   // -------------------------------
-//   // 🔌 WebSocket σύνδεση
-//   // -------------------------------
-//   useEffect(() => {
-//     if (!token) {
-//       console.log("❌ Δεν υπάρχει token, δεν γίνεται σύνδεση WebSocket.");
-//       return;
-//     }
-
-//     console.log("🔌 Προσπάθεια σύνδεσης WebSocket με token:", token);
-
-//     const onPrivateMessage = (msg) => {
-//       console.log("📩 Έφτασε ιδιωτικό μήνυμα:", msg);
-
-//       // Ενημέρωση λίστας chats
-//       setChats((prevChats) => {
-//         const updated = prevChats.map((chat) => {
-//           if (chat.id === msg.chatRoom?.id) {
-//             return { ...chat, lastMessage: msg.content, time: "Τώρα" };
-//           }
-//           return chat;
-//         });
-//         return updated;
-//       });
-
-//       // Ενημέρωση ενεργού chat window
-//       if (selectedChat?.id === msg.chatRoom?.id) {
-//         setSelectedChat((prev) => ({
-//           ...prev,
-//           messages: [
-//             ...(prev.messages || []),
-//             {
-//               senderId: msg.senderId,
-//               sender: msg.senderUsername,
-//               text: msg.content,
-//             },
-//           ],
-//         }));
-//       }
-//     };
-
-//     const onGroupMessage = (msg) => {
-//       console.log("👥 Έφτασε group μήνυμα:", msg);
-//     };
-
-//     // 🔗 Σύνδεση WebSocket
-//     connectChatSocket(token, onPrivateMessage, onGroupMessage);
-
-//     // 🧹 Καθαρισμός κατά το unmount
-//     return () => {
-//       console.log("🧹 Αποσύνδεση WebSocket");
-//       disconnectChatSocket();
-//     };
-//   }, [token, selectedChat]);
-
-//   // -------------------------------
-//   // ✉️ Αποστολή μηνύματος
-//   // -------------------------------
-//   const handleSendMessage = async () => {
-//     if (!newMessage.trim() || !selectedChat) return;
-
-//     try {
-//       console.log("📤 Αποστολή μηνύματος:", newMessage);
-
-//       if (selectedChat.type === "GROUP") {
-//         sendGroupMessage(selectedChat.id, newMessage);
-//       } else {
-//         const recipient = selectedChat.members.find(
-//           (m) => m.id !== currentUserId
-//         );
-//         if (!recipient) {
-//           console.warn("⚠️ Δεν βρέθηκε παραλήπτης!");
-//           return;
-//         }
-//         sendPrivateMessage(recipient.username, newMessage, {
-//           id: selectedChat.id,
-//         });
-//       }
-
-//       // Ενημέρωση UI τοπικά
-//       const newMsg = {
-//         id: Date.now(),
-//         sender: "Εσύ",
-//         senderId: currentUserId,
-//         text: newMessage,
-//       };
-//       setSelectedChat((prev) => ({
-//         ...prev,
-//         messages: [...(prev.messages || []), newMsg],
-//       }));
-//       setNewMessage("");
-//     } catch (err) {
-//       console.error("❌ Σφάλμα κατά την αποστολή:", err);
-//     }
-//   };
-
-//   // -------------------------------
-//   // 🧠 UI
-//   // -------------------------------
-//   return (
-//     <>
-//       {!visible && (
-//         <div
-//           className="chat-floating-icon"
-//           onClick={() => setVisible(true)}
-//           title="Άνοιγμα συνομιλιών"
-//         >
-//           <MessageCircle size={28} />
-//         </div>
-//       )}
-
-//       <Dialog
-//         visible={visible}
-//         onHide={() => setVisible(false)}
-//         maximizable
-//         resizable
-//         draggable
-//         className="chat-dialog"
-//         style={{ width: "420px", height: "520px" }}
-//         header={
-//           <div className="flex justify-between items-center w-full">
-//             <span>💬 Συνομιλίες</span>
-//             {selectedChat && (
-//               <button
-//                 className="close-room-btn"
-//                 onClick={() => setSelectedChat(null)}
-//               >
-//                 ⬅️ Πίσω
-//               </button>
-//             )}
-//           </div>
-//         }
-//       >
-//         {!selectedChat ? (
-//           <ChatList
-//             chats={chats}
-//             onSelectChat={setSelectedChat}
-//             getChatAvatar={() =>
-//               "https://i.ibb.co/4fQbM0f/unknown-person.png"
-//             }
-//             currentUserId={currentUserId}
-//             selectedChat={selectedChat}
-//           />
-//         ) : (
-//           <ChatWindow
-//             selectedChat={selectedChat}
-//             newMessage={newMessage}
-//             setNewMessage={setNewMessage}
-//             handleSendMessage={handleSendMessage}
-//             handleKeyPress={(e) =>
-//               e.key === "Enter" && handleSendMessage()
-//             }
-//             currentUserId={currentUserId}
-//           />
-//         )}
-//       </Dialog>
-//     </>
-//   );
-// };
-
-// export default ChatWidget;

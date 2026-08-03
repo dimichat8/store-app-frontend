@@ -112,7 +112,12 @@ const ApiService = {
   // ----------- PRICE -----------
   findByCategory: (category) =>
     api.get("/api/price/find/byCategory", { params: { category } }),
+  saveProductWithBarcode: (dto, barcode) => api.post("/api/product/add/barcode", { dto, barcode }),
 
+  // ----------- CUSTOMER-ORDERS -----------
+  addProductByBarcode: (data) => api.post("/api/customer-orders/scanBarcode", data),
+  createOrderForCustomer: () => api.post("/api/customer-orders/create/order"),
+ 
   // ----------- PRODUCT -----------
   addProduct: (product) => api.post("/api/product/add", product),
 

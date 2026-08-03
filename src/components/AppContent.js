@@ -22,6 +22,8 @@ import Notes from './notes/Notes';
 import ChatWidget from './chat/ChatWidget';
 import ChatList from './chat/ChatScreen';
 import ScheduleTable from './schedule/ScheduleTable';
+import ChatPage from './chat/websocket/Chat';
+import PosScreen from './priceList/barcode/PosScreen';
 
 const AppContent = () => {
   const { accessToken, isAuthInitialized } = useAuth();
@@ -55,6 +57,8 @@ const AppContent = () => {
             <Route path="/notes/add/calendar" element={<AddNotes />} />
             <Route path="/notes/show/calendar" element={<Notes />} />
             <Route path="/chat/show/all/conversation" element={<ChatList />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/pos" element={<PosScreen />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
